@@ -1,0 +1,192 @@
+1、重定向
+	(1)什么是重定向？
+		服务器发送一个302状态码及一个Location消息头(值是一个地址，称为重定向地址)，通知浏览器立即向重定向地址发请求。
+	(2)如何重定向？
+		response.sendRedirect(String url);
+	(3)注意两个问题
+		a、重定向之前，不要调用out.close方法。
+		b、重定向之前，服务器会先清空response对象上缓存的数据。
+	(4)两个特点
+		a、重定向的地址是任意的
+		b、重定向之后，浏览器地址栏的地址会变成重定向地址。
+
+2、将中文数据插入到数据库
+	a、要确保数据库支持中文，即正确设置数据库的字符集，比如建mysql的数据库时，
+		create database xxx default character set utf8;
+
+	b、jdbc驱动必须能够正确地进行编码和解码，但是有些mysql不能够正确进行编码和解码(默认使用iso-8859-1进行编码和解码)，可以在jdbc的url参数设置为:
+			"jdbc:mysql://ip:port/xxx?useUnicode=true&characterEncoding=utf8"
+
+3、DAO
+	Data Access Object
+	(1)什么是DAO？
+		封装了数据访问逻辑的一个模块。
+
+	(2)如何写一个DAO？
+		a、实体类
+			为了方便对数据库中的记录进行操作而封装的一个普通java类。
+			比如，有一个表t_emp,可以设计一个对应的Employee类。
+		b、DAO接口
+			声明一系列方法，这些方法不应该涉及具体的数据库访问技术。
+			比如，EmployeeDAO接口：
+		c、DAO实现
+			使用具体的技术来实现dao接口。
+			比如EmployeeDAOJdbcImpl类。
+		d、DAO工厂
+			工厂是一个设计模式(所谓设计模式，是为解决一类相同或者相似的问题提出的一套解决方案，并且会对这个解决方案命名，比如工厂就是一个常用的设计模式)。
+			工厂模式特点：
+				工厂为调用者提供符合接口要求的对象(这个对象一般称为产品)，这样做的好处是，当调用者不用了解对象的创建的细节，这样，当对象的创建过程发生改变，不会影响到调用者。
+
+3、servlet容器如何处理请求资源路径
+	比如、我们在浏览器地址栏输入：http://ip:port/appname/xxx.html
+	浏览器会将"/appname/xxx.html"作为请求资源路径发送给servlet容器。
+	处理顺序：
+		a、servlet容器会先假设访问的是一个servlet，会依据应用名(appname)找到应用所在的文件夹，然后找到web.xml文件。
+
+		b、匹配<url-pattern>：
+			i、精确匹配(完全匹配)：
+			ii、通配符匹配：使用"*"号匹配任意长度的字符串，
+				比如<url-pattern>/*</url-pattern>
+					<url-pattern>/abc/*</url-pattern>
+			iii、后缀匹配：使用"*."开头，后接任意的字符串，
+				比如<url-pattern>*.do</url-pattern>
+				以上，表示匹配以.do为结尾的请求。
+
+		c、如果都不匹配，则容器认为访问的是一个静态文件(比如html文件)，然后容器会查找该文件，如果找到则返回，否则会返回404.
+
+4、一个servlet处理多种请求？
+	(1)、使用后缀匹配模式，比如<url-pattern>*.do</url-pattern>
+	(2)、分析请求资源路径，然后依据分析的结构分别进行不同的处理。
+		String HttpServletRequest.getRequestURI();
+
+5、servlet的生命周期
+	(1)servlet的生命周期的含义？
+		servlet容器如何去创建servlet对象，如何给servlet对象分配资源、如何调用servlet对象的方法来处理请求，以及如何去销毁servlet对象的整个过程。
+
+	(2)servlet生命周期的四个阶段：
+		1)实例化：
+			a、实例化，指的是容器调用servlet的构造器，创建servlet对象。
+			b、什么时候实例化？
+				情况1：
+					容器收到请求之后才创建servlet对象。在默认情况下，容器只会为servlet创建唯一的一个实例，不会重复创建。
+				情况2：
+					容器事先将某些servlet(需要配置load-on-startup参数，在<servlet></servlet>标签里，但在<servlet-class></servlet-class>标签后面)对象创建好。load-on-startup参数值必须是>=0的整数，越小，优先级越高，即先被实例化。
+
+		2)、初始化
+			a、初始化，指的是容器在创建好servlet对象之后，会立即调用servlet对象的init方法。
+			b、init方法：
+				b1、init方法只会执行一次。
+				b2、GenericServlet已经实现了init方法，该方法会将容器创建好的ServletConfig对象作为参数传给init方法。
+				b3、ServletConfig对象提供了一个getInitParameter方法来访问servlet的初始化参数。
+					step1、在web.xml文件里面，使用<init-param>来配置初始化参数
+					step2、String ServletConfig.getInitParameter(String paraName)
+				b4、如果GenericServlet的init方法提供的初始化操作不满足需要，可以override init的无参方法。
+
+		3)、就绪
+			a、就绪指的是servlet对象可以接收调用了，容器收到请求之后，会调用servlet对象的service方法来处理。
+			b、HttpServlet已经实现了service方法，该方法会依据请求类型(get/post)分别调用doGet/doPost方法，所以在写一个servlet时，有两种选择：
+				选择1：override HttpServlet的doGet或者doPost方法。
+				选择2：override HttpServlet的service方法。
+		
+		4)、销毁
+			a、销毁指的是servlet容器在销毁servlet对象之前会调用destroy方法。
+
+	(3)servlet生命周期相关的几个接口与类
+		1)Servlet接口
+			a、init(ServletConfig config)
+			b、service(ServletRequest req,ServletResponse res)
+			c、destroy()
+
+		2)GenericServlet抽象类
+			实现了Servlet接口中的init，destroy方法
+
+		3)HttpServlet抽象类
+			继承了GenericServlet抽象类
+
+		4)ServletConfig接口
+			String getInitParameter(String paraName)。
+
+		5)ServletRequest接口是HttpServletRequest的父接口，ServletResponse接口是HttpServletResponse的父接口
+
+6、jsp(java server page)：java服务器端动态页面
+	(1)什么是jsp？
+		sun公司制订的一种服务器端的动态页面而生成技术规范。
+	(2)为什么要使用jsp？
+		因为直接使用servlet，虽然也可以生成动态页面，但是，编写繁琐(需要靠使用out.println来输出)，并且维护困难(如果页面发生了改变，需要修改java代码)，所以sun制订了jp规范。
+		jsp其实是一个以.jsp为后缀的文件，容器会自动将.jsp文件转换成一个.java文件(其实就是servlet)，然后调用该servlet。所以，从本质上讲，jsp其实就是一个servlet。
+	(3)如何写一个jsp文件？
+		a、创建一个以.jsp为后缀的文件。
+		b、在该文件里面，可以添加如下的内容
+			1)html(css,js)直接写即可。
+			2)java代码：
+				a、java代码片段：
+					<% java代码 %>
+				c、在需要动态赋值的地方使用<%=newValue %>表达式
+				d、<%!  %>：jsp声明(Web15/d.jsp)
+			3)指令
+				a、什么是指令？
+					通知容器，在将jsp文件转换成java文件时，做一些额外的处理，比如导包
+				b、指令语法
+					page指令：
+						import属性：导包。需要在html标签之前加入<@ page import="...">					如需多个包，以逗号分隔
+						pageEncodeing属性：通知容器jsp文件的编码。如果有中文字符，需要在html标签之前	加入<@ page pageEncoding="utf-8">
+						contentType属性：设置response.setContentType值
+						session属性：true(默认)/false，如果为false，则容器不会添加获得session的语句。
+						isELIgnored属性：true(默认)/false，如果值为false，通知容器不要忽略el表达式。
+						isErrorPage属性：true/false(默认)，如果值为true，表示这是一个错误处理页面(即专门用来处理其他jsp产生的异常)。只有当isErrorPage为true时，才能使用exception隐含对象。
+						errorPage属性：设置一个错误处理页面(Web/a.jsp,b.jsp)
+					include指令
+						file属性：
+							将某个文件的内容(由file属性指定)插入到该指令所在的位置。
+					taglib指令
+						导入jsp标签
+				c、隐含对象
+					request
+					response
+					out
+					session
+					application(即ServletContext)
+					exception：
+						当jsp页面发生了异常，容器会将异常信息封装到该对象，可以使用该对象提供的getMessage来获得异常信息，并且要设置isErrorPage为true时，才能使用exception对象
+					pageContext
+						a、什么是pageContext？
+							容器会为每一个jsp实例(jsp所对应的那个servlet对象)创建唯一的一个符合PageContext接口的对象，称之为page上下文，该对象会一直存在，除非jps实例被销毁。
+						b、作用
+							b1、绑定数据
+								setAttribute，removeAttribute，getAttribute
+								pageContext上面绑定的数据只有对应的jsp实例能访问
+							b2、找到其它八个隐含对象
+					config:ServletConfig(Web15/c.jsp)
+					page:jsp实例本身
+
+			4)注释(Web15/e.jsp)
+				a、<!-- 注释内容 -->：允许注释的内容是java代码，如果是java代码，会被容器执行。但是执行的结果会被浏览器忽略(不会显示出来，但是能在源代码里看到执行的结果)。
+				b、<%-- 注释内容 --%>：注释的内容不能是java代码，如果是java代码，会被容器忽略，且源代码中看不到执行的结果。
+
+					
+
+	(4)jsp是如何运行的？
+		a、当接收到访问请求时，jsp引擎先把该jsp文件转换成一个Java源文件(实质上也是一个Servlet类)，然后再编译成class文件。由于jsp第一次访问时会翻译成servlet，所以第一次访问会比较慢，此后访问会相对快些。
+		b、然后由容器去执行这个由jsp翻译之后的servlet程序。
+		c、容器将执行后的结果响应到客户端。
+
+		总结：
+			JSP执行过程：
+				1)首先，客户端发出请求(request)，请求访问JSP网页;
+				2)接着，JSP Container把要访问的.JSP文件转译成Servlet的源代码(.java文件);
+				3)然后，将产生的Servlet的源代码(.java文件)经过编译，生成.class文件，并加载到内存执行;
+				4)最后把结果响应(response)给客户端。
+
+				   执行JSP网页文件时，需要经过两个时期：转译时期(TranslationTime)和请求时期(RequestTime)。
+				   转译时期：JSP转译成Servlet类(.class文件)。
+				   请求时期：Servlet类(.class文件)执行后，响应结果至客户端。
+
+				  转译期间主要做了两件事情：
+				   (1)将JSP网页转译为Servlet源代码(.java)，此段称为转译时期(Translation time)；
+				   (2)将Servlet源代码(.java)编译成Servlet类(.class)，此阶段称为编译时期(Compilation time)。
+
+			.jsp转换成.java文件
+				a、html		----->	service方法，out.write输出
+				b、<% %>	----->	service方法，照搬
+				c、<%= %>	----->	service方法，out.print输出
+				d、<%! %>	----->	给servlet添加新的属性或者方法

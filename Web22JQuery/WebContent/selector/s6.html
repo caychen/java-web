@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1() {
+		$('div[id]').css('font-size','60px');
+	}
+	function f2() {
+		$('div[id!=d1]').css('font-size','60px');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">Hello jQuery</div>
+	<div id="d2">Hello Java</div>
+	<input type="button" value="点击" onclick="f2();"/>
+</body>
+</html>

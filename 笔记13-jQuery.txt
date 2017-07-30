@@ -1,0 +1,263 @@
+1、jQuery基础
+	(1)jQuery特点
+		jQuery利用选择器(借鉴了css选择器的语法)查找要操作的节点(dom对象)，然后将这些节点封装成一个jQuery对象。
+		目的：一是为了兼容不同的浏览器，二是为了简化代码。通过调用jQuery对象的方法或者属性来实现对底层dom对象的操作。
+
+	(2)jQuery编程步骤(Web22JQuery/first.html)
+		a、引入jQuery框架
+			<script src="jquery.js">
+		b、使用选择器查找要操作的节点(该节点会被封装成jquery对象)
+			var $obj = $("#d1");
+		c、调用jquery对象的方法获得属性(返回值还是一个jquery对象)
+			$obj.css('font-size','60px');
+
+	(3)jQuery对象与dom对象如何相互转换？
+		a、dom对象---->jQuery对象
+			var obj = document.getElementById('id1');//obj为dom对象
+			var $obj = $(obj);//$obj为jQuery对象
+		b、jQuery对象---->dom对象
+			方式1：
+				$obj.get(0);
+			方式2：
+				$(obj).get()[0];
+
+	(4)如何同时使用prototype和jQuery？(Web22JQuery/conflict.html)
+		a、先导入prototype.js，再导入jquery.js
+		b、将jQuery的$函数换一个名字，比如$a
+			var $a = jQuery.noConflict()；
+
+2、选择器
+	(1)什么是选择器？
+		jQuery模仿css选择器的语法，提供了一种用来方便查找要操作的节点的规则。
+
+	(2)基本选择器(Web22JQuery/selector/s1.html)
+		#id
+		.class
+		element
+		selector1,selector2,...,selectorn
+		*
+
+	(3)层次选择器(Web22JQuery/selector/s2.html)
+		selector1 selector2:选择器1的所有满足选择器2的后代
+		selector1>selector2:选择器1的所有满足选择器2的子节点
+		selector1+selector2:选择器1的所有满足选择器2的下一个兄弟节点
+		selector1~selector2:选择器1的所有满足选择器2的之后的所有兄弟节点(不包括前面的兄弟节点)
+
+	(4)过滤选择器
+		1)、基本过滤选择器(Web22JQuery/selector/s3.html)
+			:first	第一个节点
+			:last	最后一个节点
+			:not(selector)	将满足selector的节点排除在外
+			:even	下标(从0开始)为偶数的节点
+			:odd	下标(从0开始)为奇数的节点
+			:eq(index)	下标等于index的节点
+			:gt(index)	下标大于index的节点
+			:lt(index)	下标小于index的节点
+
+		2)、内容过滤选择器(Web22JQuery/selector/s4.html)
+			:contains(text)	匹配包含给定文本的元素
+			:empty	匹配所有不包含子元素或者文本的空元素
+			:has(selector)	匹配含有选择器匹配的元素的元素
+			:parent	匹配含有子元素或者文本的元素(与empty相反)
+
+		3)、可见过滤选择器(Web22JQuery/selector/s5.html)
+			:hidden	匹配所有不可见元素，或者type为hidden的元素
+			:visible	匹配所有的可见元素	
+
+		4)、属性过滤选择器(Web22JQuery/selector/s6.html)
+			[attribute]	含有该属性的节点
+			[attribute=value]	含有属性值为value的节点
+			[attribute!=value]	含有属性值不为value的节点
+
+		5)、子元素过滤选择器(Web22JQuery/selector/s7.html)
+			:nth-child(index/even/odd) 下标从1开始
+
+		6)、表单对象属性过滤选择器(Web22JQuery/selector/s8.html)
+			:enabled	启用
+			:disabled	禁用
+			:checked	单选框，多选框被选中的选项	
+			:selected	下拉列表被选中的选项
+
+	(5)表单选择器
+		:input
+		:text
+		:password
+		:radio
+		:checkbox
+		:submit
+		:image
+		:reset
+		:button
+		:file
+		:hidden
+
+3、dom操作
+	1)查询(Web22JQuery/dom/d1.html)
+		利用选择器找到要操作的节点之后，获得节点的值、属性值、文本以及html内容
+		a、html():html内容
+		b、text():文本
+		c、val():节点的值
+		d、attr():属性值
+		此外，这几个方法也可以用来修改节点的内容、值、文本和属性值。
+
+	2)创建(Web22JQuery/dom/d2.html)
+		$(html):
+
+	3)插入节点(Web22JQuery/dom/d2.html)
+		append():向某个匹配的元素内部追加内容
+		prepend():向某个匹配的元素内部前置内容
+		after():向某个匹配的元素之后插入内容
+		before():向某个匹配的元素之前插入内容
+
+	4)删除节点(Web22JQuery/dom/d3.html)
+		remove()
+		remove(selector)
+		empty():清空节点，innerHTML="";
+
+	5)如何将javascript代码与html分开？(Web22JQuery/dom/d4.html d5.html)
+		使用如下的结构：
+			$(function(){
+				//此处的js代码会在页面加载完成之后执行
+			});
+
+	6)复制节点(Web22JQuery/dom/d6.html)
+		clone():
+		clone(true):使复制的节点也具有行为(将处理代码一起复制)
+
+	7)属性操作(Web22JQuery/dom/d7.html)
+		读取：attr(''):
+		设置：attr('',''):
+		设置多个：attr({"":"","":""}):
+		删除：removeAttr('')
+
+	8)样式操作(Web22JQuery/dom/d7.html)
+		获取和设置：attr("class","")或者attr('style','');
+		追加：addClass('')追加一个或者多个样式
+		移除：removeClass('')
+			或者removeClass('s1 s2');
+			或者removeClass()//会删除所有样式
+		切换样式：toggleClass,有该样式就删除，没有就添加
+		是否有某个样式：hasClass('')
+		读取css('','')或者css({'':'','':''})
+
+	9)遍历节点(Web22JQuery/dom/d8.html)
+		children()/children(selector):只考虑子元素(或者满足selector的子节点)，不考虑其他后代元素
+		next()/next(selector):下一个兄弟
+		prev()/prev(selector):上一个兄弟
+		siblings()/siblings(selector):所有的兄弟子节点
+		find(selector):从某个节点开始往下查找满足selector要求的节点
+		parent():父节点
+
+4、事件绑定
+	(1)事件绑定(Web22JQuery/event/e1.html)
+		bind(type,fn)
+	(2)绑定方式的简写形式(Web22JQuery/event/e1.html)
+		click(function(){
+		});	
+	(3)合成事件(Web22JQuery/event/e2.html)
+		hover(enter,leave):模拟光标悬停事件
+		toggle(fn1,fn2,...):模拟鼠标连续单击事件
+	(4)事件冒泡
+		1)什么是事件冒泡(Web22JQuery/event/e3.html)
+			子节点产生的事件，会依次向上抛出给相应的父节点
+		2)如何取消冒泡事件？
+			e.cancelBubble = true;
+		3)事件对象有何作用？
+			a、取消冒泡
+				e.cancelBubble = true;
+			b、获得光标点击的坐标
+				e.clientX,e.clientY
+			c、找到事件源(Web22JQuery/event/e4.html)
+				e.target:	针对非IE
+				e.srcElement: 针对IE
+		jQuery
+		1)获得事件对象(Web22JQuery/event/e5.html)
+			click(function(e){
+				//e:对底层的事件对象做了一个封装(名称随意)
+			})
+		2)停止冒泡
+			event.stopPropagation();
+		3)停止默认行为
+			event.preventDefault();
+		4)事件对象的属性
+			event.type：事件类型
+			event.target:返回事件源(dom对象)
+			event.pageX/pageY:获得光标点击的坐标
+	(5)模拟操作
+		trigger('click');
+
+5、动画
+	1)show/hide(Web22JQuery/animate/a1.html)
+		a:作用：通过同时改变元素的宽度和高度来实现显示或者隐藏
+		b:用法
+			show(速度[,回调函数])
+				速度:'slow','normal','fast',毫秒数
+				回调函数:整个动画执行完成后，会执行该函数
+	2)slideUp/slideDown
+		a、作用：通过同时改变元素的高度来实现显示或者隐藏
+		b、用法同1)
+	3)fadeIn/fadeOut:淡入/淡出(Web22JQuery/animate/a2.html)
+		a、作用：通过改变元素的不透明度来实现显示或者隐藏
+		b、用法同1)
+	4)自定义动画animate(params,speed [,callback])(Web22JQuery/animate/a3.html)
+		用法:
+			params：是一个javascript对象，描述动画执行结束之后元素的样式，比如：
+				{'height':'200px'}
+			speed:速度，单位是毫秒数
+			callback:回调函数
+
+6、类数组的操作
+	jQuery对象里面可能会包含多个dom对象，所谓类数组，指的就是这些dom对象。
+	each(fn(i)):循环遍历每个元素，this代表被迭代的dom对象，$(this)代表被迭代的jquery对象，i表示正在被遍历的那个对象的下标。(Web22JQuery/array/a1.html)
+	eq(index):返回index+1位置处的jquery对象(Web22JQuery/array/a2.html)
+	index(obj):返回下标，其中obj可以是dom对象或者jquery对象(Web22JQuery/array/a2.html)
+	get():返回dom对象组成的数组
+	get(index):返回index+1个dom对象
+	length属性:获得jQuery对象包含的dom对象的个数
+
+7、jQuery对ajax编程的支持
+	(1)load
+		a、作用：将服务器返回的数组直接插入到符合要求的节点之上，相当于obj.innerHTML = 服务器返回的数据。
+		b、用法：
+			$obj.load(请求地址[，请求参数]);
+			请求地址：服务器上的某个组件的地址
+			请求参数：
+				i、请求字符串："name=zs&age=22"
+				ii、对象的形式：{'name':'zs','age':22};
+		load方法：
+			当没有请求参数时，会使用get方式向服务器发请求；如果有请求参数，会使用post方法向服务器发请求。
+	(2)$.get方法：使用get方式向服务器发请求，$.post方法：使用post方式向服务器发请求
+		a、作用：使用get/post方式向服务器发送请求
+		b、用法：
+			$.get/post(url[,data][,callback][,type])
+			url:请求地址
+			data:请求参数，格式同load
+			callback:回调函数，格式function(data,statusText),其中
+				data:服务器返回的数据
+				statusText:服务器处理的状态
+			type:服务器返回的数据类型
+				html:返回的是html内容
+				text:返回的是text
+				json:返回的是json字符串
+				xml:返回的是xml文档
+				script:返回的是javascript脚本
+	(3)$.ajax方法:
+		用法：
+			$.ajax({})
+			选项参数如下：
+				url:请求地址，类型：字符串
+				type:get/post，类型：字符串，
+				data:请求参数，类型：字符串/对象
+				dataType:预期服务器返回的数据类型，类型：字符串
+				success:请求成功后调用的回调函数，有两个参数
+					function(data,textStatus),其中，
+						data:服务器返回的数据
+						textStatus:描述状态的字符串
+				error:请求失败后调用的回调函数，有三个参数
+					function(XmlHttpRequest,textStatus,errorThrown)
+						XmlHttpRequest:底层的XmlHttpRequest对象
+						textStatus:错误描述
+						errorThrown:一般为null
+				async:true(缺省)/false
+					true:异步
+					false:同步

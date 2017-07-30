@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.on{
+		line-height: 21px;
+		width: 21px;
+		height: 21px;
+		font-size: 16px;
+		margin: 0 1px;
+		border: 0;
+		background-color: red;
+		font-weight: bold;
+	}
+
+	*{
+		margin: 0px;
+		padding: 0px;	
+	}
+	
+	#d1{
+		border: 1px solid #aaa;
+		margin-left: 200px; /*往右偏移200px*/
+		margin-top: 40px;/*往下偏移40px*/
+		width: 520px;
+		height: 280px;
+		overflow: hidden;/*超出部分进行隐藏*/
+		position: relative;/*相对于同级元素的定位，也就是上一个同级元素*/
+	}
+
+	#ad, #num{
+		position: absolute;
+	}
+	
+	ul img{
+		width: 520px;
+		height: 280px;
+		display: block;
+	}
+	
+	#num{
+		right: 5px;
+		bottom: 5px;
+	}
+	
+	#num li{
+		float: left;
+		color: #ff7300;
+		text-align: center;
+		line-height: 16px;
+		width: 16px;
+		height: 16px;
+		font-family: Arial;
+		font-size: 12px;
+		cursor: pointer;
+		overflow: hidden;
+		margin: 3px 1px;
+		border: 1px solid #ff7300;
+	}
+</style>
+
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('#num li').mouseenter(function(){
+			//需要知道光标指向的某个li
+			var index = $('#num li').index(this);
+			//依据index下标开始滚动图片
+			showImage(index);
+		}).eq(0).mouseenter();
+		//.eq(0).mouseenter()：用来模拟光标进入第一个li触发事件
+		
+		//光标进入，停止滚动图片
+		//光标离开，开始滚动图片
+		var index = 0;
+		var timeId;
+		$('#d1').hover(function(){
+			//进入
+			clearInterval(timeId);
+		},function(){
+			//离开
+			timeId = setInterval(function(){
+				showImage(index);
+				index++;
+				if(index == 5)
+					index = 0;
+			},2000);
+		}).mouseleave();//.mouseleave()：用来模拟鼠标离开事件
+	});
+	
+	//滚动图片
+	function showImage(index){
+		//stop(true):在执行当前动画之前，先清空之前累积的动画
+		$('#ad').stop(true).animate({'top': -index * 280}, 1000);
+		
+		//加亮光标指向的li
+		//在将光标指向的li加亮的同时，需要把其它兄弟的加亮效果去掉
+		$('#num li').eq(index).addClass('on')
+			.siblings().removeClass('on');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">
+		<ul id="ad">
+			<li><img src="../images/1.jpg" /></li>
+			<li><img src="../images/2.jpg" /></li>
+			<li><img src="../images/3.jpg" /></li>
+			<li><img src="../images/4.jpg" /></li>
+			<li><img src="../images/5.jpg" /></li>
+		</ul>
+		<ul id="num">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+	</div>
+</body>
+</html>

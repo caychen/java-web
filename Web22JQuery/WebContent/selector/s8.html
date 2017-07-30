@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		$('#form1 input:disabled').css('border','1px dotted red');
+		
+		$('#form1 input:disabled').attr('disabled',false);
+	}
+	
+	function f2(){
+		alert($('#form2 input:checked').val());
+	}
+	
+	function f3(){
+		alert($('#form3 option:selected').val());
+	}
+</script>
+</head>
+<body>
+	<form id="form1">
+		姓名:<input name="username" disabled="disabled"/><br/>
+		真名:<input name="name"/><br/>
+	</form>
+	<form id="form2">
+		兴趣爱好:
+		做饭<input type="checkbox" value="cooking" name="interest"/>
+		钓鱼<input type="checkbox" value="fishing" name="interest" checked="checked"/>
+		旅游<input type="checkbox" value="traveling" name="interest"/>
+	</form>
+	<form id="form3">
+		<select>
+			<option value='bj'>北京</option>
+			<option value='sh'>上海</option>
+			<option value='nj' selected="selected">南京</option>
+			<option value='sz'>苏州</option>
+		</select>
+	</form>
+	<input type="button" value="点击" onclick="f3();"/>
+</body>
+</html>

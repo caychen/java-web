@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	#d1{
+		width: 100px;
+		height: 100px;
+		background-color: red;
+		position: absolute;
+		left: 20px;
+		top: 0px;
+	}
+</style>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('#d1').click(function(){
+			//联动动画
+			//$(this).animate({'left':'520px','top':'250px'},5000)
+			
+			//先向右然后向下
+			$(this).animate({'left':'520px'},5000);
+			$(this).animate({'top':'250px'},3000);
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="d1"></div>
+</body>
+</html>

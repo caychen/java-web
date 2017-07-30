@@ -1,0 +1,37 @@
+1、json(javascript object notation)
+	(1)什么是json？
+		是一种轻量级的数据交换技术规范(因为借鉴了javascript对象创建的一种语法结构，故命名为json)。
+		a、数据交换
+			将数据转换成一个中间的与平台无关的数据格式(比如xml或者json字符串)发送给另外一方来处理。
+		b、轻量级
+			json相对于xml，所需要的数据大小要小得多，并且解析的速度要更快。
+	
+	(2)json语法(www.json.org)
+		a、表示一个对象
+			{属性名:属性值,...}
+			注意：
+				i、属性名要使用引号
+				ii、属性值如果是字符串，要使用引号
+				iii、属性值可以是string，number，boolean，null，object。
+		b、表示一个对象组成的数组
+			[{},{},{},...]
+
+	(3)如何使用json来编写ajax应用程序
+		a、java对象转换成json字符串
+			一般使用json官方提供的api(json-lib)来实现转换。
+		b、json字符串转换成javascript对象
+			可以使用一些工具提供的方法，比如prototype提供了evalJSON。
+			prototype是一个js文件，里面提供了很多常用的函数，比如：
+				i、$(id):document.getElementById(id);
+				ii、$F(id):$(id).value;
+				iii、$(id1,id2,id3...):分别依据id1，id2，...查找对应的节点，然后放到一个数组里面返回。
+				iv、strip()：除掉字符串两端的空格。
+				v、evalJSON()：将json字符串转换成对应的javascript对象，或者javascript对象组成的数组。
+
+2、同步请求
+	(1)什么是同步请求？
+		ajax对象在向服务器发送请求时，浏览器会锁定当前页面，用户不能够对当前页面做任何的操作。
+	(2)如何发送同步请求？
+		open(请求方式，请求地址，false);
+	(3)优先使用异步，因为同步会影响性能，当服务器端处理比较慢的时候，浏览器会锁定当前页面(锁死)。
+	(4)只有当客户端需要等待服务器的响应之后，才能继续向下执行的时候，才使用同步。

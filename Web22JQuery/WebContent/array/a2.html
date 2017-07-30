@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('#b1').click(function(){
+			var $obj = $('ul li');
+			
+			//取下标对应处的dom对象，然后将这个dom对象封装成一个jquery对象
+			var $o = $obj.eq(1);
+			$o.css('font-size','60px');
+			
+			//返回dom对象或者jquery对象在类数组中的下标
+			alert($obj.index($o));
+		});
+	});
+</script>
+</head>
+<body>
+	<ul>
+		<li>item1</li>
+		<li>item2</li>
+		<li>item3</li>
+	</ul>
+	<input type="button" value="点击" id="b1"/>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>Web3</display-name>
+  <servlet>
+    <servlet-name>ListEmp</servlet-name>
+    <servlet-class>Web.ListEmpServletFromDB</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ListEmp</servlet-name>
+    <url-pattern>/ListEmpFromDB</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>Third-ListEmp</servlet-name>
+    <servlet-class>Web.AddEmpServlet3ToDB</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Third-ListEmp</servlet-name>
+    <url-pattern>/AddEmp4</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>delEmp</servlet-name>
+  	<servlet-class>Web.DelEmpServletFromDB</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>delEmp</servlet-name>
+  	
+  	<!--此处的url-pattern必须与删除链接的href=""值相同-->
+  	<url-pattern>/del</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>loadEmp</servlet-name>
+  	<servlet-class>Web.LoadEmpServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>loadEmp</servlet-name>
+  	<url-pattern>/load</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>ModifyEmp</servlet-name>
+  	<servlet-class>Web.ModifyEmpServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ModifyEmp</servlet-name>
+  	<url-pattern>/modify</url-pattern>
+  </servlet-mapping>
+</web-app>

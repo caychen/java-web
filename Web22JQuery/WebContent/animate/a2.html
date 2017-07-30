@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	#d1{
+		display:none;
+		width: 200px;
+		height: 200px;
+		background-color: #fff8dc;
+		border: 1px solid red;
+	}
+</style>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('#b1').toggle(function(){
+			$('#d1').fadeIn('slow');//淡入
+		},function(){
+			$('#d1').fadeOut('slow');//淡出
+		});
+	});
+</script>
+</head>
+<body>
+	<input type="button" value="点击" id="b1"/>
+	<div id="d1"></div>
+</body>
+</html>

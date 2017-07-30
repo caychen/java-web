@@ -1,0 +1,183 @@
+1、Struts2使用步骤
+	Struts设计思想：MVC
+		M：Model
+		V：View
+		C：Controller
+		
+	(1)、创建web项目(以Struts2_01项目为例)
+
+	(2)、添加struts2的基本jar(版本可能不是如下)
+		struts2-core-2.3.24.1.jar
+		xwork-core.2.3.24.1.jar
+		commons-io-2.2.jar
+		commons-lang3-3.2.jar
+		commons-logging-1.1.3.jar
+		javassist-3.11.0.GA.jar
+		ognl-3.0.6.jar
+		commons-fileupload-1.3.1.jar
+		freemarker-2.3.22.jar
+
+	(3)、在web.xml中配置Struts2的前端控制器
+		<filter>
+			<filter-name>Struts2</filter-name>
+			<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>Struts2</filter-name>
+			<url-pattern>/*</url-pattern>
+		</filter-mapping>
+
+	(4)、控制器配置文件src/struts.xml(example,此处struts版本为2.3)
+
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE struts PUBLIC
+		    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+		    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    
+	    <!-- package提供了将多个Action组织为一个模块的方式
+	        package的名字必须是唯一的, 
+	        	package可以扩展,当一个package扩展自另一个package时,该package会在本身配置的基础上加入扩展的package的配置,父package必须在子package前配置 
+	        name：package名称(此处非java代码中的包名)
+	        extends:继承的父package名称
+	        abstract:设置package的属性为抽象的,抽象的package不能定义action ,值true/false
+	        namespace:
+	        	定义package命名空间,该命名空间影响到url的地址，
+	        	例如此命名空间为/test,那么访问是的地址为http://localhost:8080/应用名/test/XX.action
+	     -->
+     
+		<struts>
+			<package name="one" namespace="/Struts2_01" extends="struts-default">
+				 
+				 <!-- Action配置 一个Action可以被多次映射(只要action配置中的name不同)
+		             name：action名称
+		             class: 对应的类的路径
+		             method: 调用Action中的方法名,如果不提供method属性，那么在类中的方法名必须为execute(),返回值为String
+		        -->
+		        <!--
+		        	http://localhost:8080/Struts2_01/Struts2_01/hello.action
+		        -->
+				<action name="hello" class="One.HelloAction">
+					<result name="success">/jsp/Hello.jsp</result>
+					<result name="error">/jsp/error.jsp</result>
+				</action>
+			</package>
+		</struts>
+
+	(5)跨包
+		<action name="list2" class="action.ListCostAction">
+			<!-- <interceptor-ref name="checkAdmin"></interceptor-ref> -->
+			<result name="success">/WEB-INF/jsp/cost_list_struts2.jsp</result>
+			<result name="fail" type="redirectAction">
+				<param name="namespace">/main</param>
+				<param name="actionName">loginform</param>
+			</result>
+		</action>
+
+2、OGNL(Struts2_02/Test/...)
+	OGNL是Object-Graph Navigation Language的缩写
+	
+	Ognl.setValue(String expr, Object root, Object tree);
+	Ognl.getValue(String expr, Object root);
+
+
+3、Struts2的核心组件
+	Front Controller(简称FC)
+	ValueStack
+	Action
+	Result
+	Intercptor(拦截器)
+	Tags(标签)
+
+4、基本流程
+	1)请求提交给Front Controller；
+	2)根据配置信息确定要调用的Action；
+	3)创建一个ValueStack；
+	4)创建Action对象，把Action对象放到ValueStack的栈顶；
+	5)调用Action的方法，根据输入属性算输出属性；
+	6)再调用Action之前或之后调用一系列Interceptor拦截器方法；
+	7)根据Action返回的字符串，确定Result，调用Result对象将输出按照特定的格式显示；
+	8)很多情况下，Result将转发到jsp页面，jsp页面用Tags取出数据并显示。
+
+5、Struts2中的Result原理和常用的Result
+	编写一个类继承Result，重载execute方法
+	在struts.xml中配置result
+	例如：/Struts2_05_review/...	
+		<struts>
+			<package name="test" namespace="/" extends="struts-default">
+				<result-types>
+					<result-type name="some" class="result.SomeResult"></result-type>
+				</result-types>
+				<action name="test" class="action.TestAction">
+					<result name="success" type="some"></result>
+				</action>
+			</package>
+		</struts>
+	常用的result
+		1)dispatcher：转发至jsp
+		2)redirectAction：重定向到action
+			参数:如果需要跨包的话，加入<param></param>
+				actionName:action的name值
+				namespace:action所在的namespace
+		3)stream：返回二进制stream
+			参数：
+				inputName：OGNL表达式，输入流对象
+				contentType：流类型(比如image/jpg)
+		4)json：返回json
+			参数：
+				root：OGNL表达式，要做成json字符串的对象
+
+6、Struts2中的Interceptor拦截器的原理和常用的Interceptor
+	1)
+		i：不调用invoke，invokeActionOnly:不调用Action(包括后面的Interceptor)，拦截器中的return的String决定了后面的Result；
+		ii：调用invoke：会调用action，也包括Result，而拦截器中的return内容无效；
+		iii：调用invokeActionOnly，调用action(不包括后面的interceptor和result)，拦截器中的return的String决定了后面的Result。
+
+		a、调用ActionInvocation对象的getStack方法获取ValueStack
+		b、调用ServletActionContext的静态方法获取Servlet的API
+	2)常用Interceptor
+		ParametersInterceptor
+		FileUploadInterceptor
+
+7、Struts2中常用的标记
+	1)<s:property value=""/>
+	2)<s:if test=""></s:if>
+	3)<s:iterator list="" ></s:iterator>
+	4)<s:form></s:form>....等等表单上的一些标记
+
+8、Struts2中的Action的设计经验
+	1)配置文件的拆分 ：<includes file="" ></includes>
+	2)控制好Action的粒度，有些类可以通用
+	3)Action和Servlet API的耦合度，尽可能低，可以使用Aware
+		或者可以封装成拦截器
+	4)适当地使用通配符
+	5)根据输入算输出
+
+9、Struts2中的异常处理(Struts2_05_review/struts.xml)
+	<global-exception-mappings>
+		<exception-mapping result="" exception=""></exception-mapping>
+	</global-exception-mappings>
+	<action name="test" class="action.TestAction">
+		<result name="daoError">/WEB-INF/jsp/error.jsp</result>
+		<result name="success" type="some">
+			<param name="root">emp</param>
+		</result>
+		<exception-mapping result="daoError" exception="dao.DAOException"></exception-mapping>
+	</action>
+
+10、Struts2的国际化
+	i18n
+	分为类级，包级和全局，而如果在不同级别中有相同的关键字，则优先使用类级，然后包级，最后全局。
+
+	src
+		action
+			(类级，只属于***action类，***action需要继承ActionSupport)
+			***Action_zh_CN.properties
+			***Action_en_US.properties
+			(包级，同一个包可以使用)
+			package_zh_CN.properties
+			package_en_US.properties
+		(全局，任何包都可以使用，需要在struts.xml中<struts>开始处配置属性)
+			<constant name="struts.custom.i18n.resources" value="XXX"></constant>
+		XXX_zh_CN.properties
+		XXX_en_US.properties
+	例子：(Struts2_05_review/struts.xml)

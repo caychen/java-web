@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+	function button1(){
+		$('tbody tr:even').css('background-color','yellow');
+		$('tbody tr:odd').css('background-color','green');
+	}
+	
+	function button2(){
+		$('tbody tr:eq(1) td:eq(1)').css('background-color','red');
+	}
+	
+	function button3(){
+		$('tbody tr:contains(王五)').css('background-color','red');
+	}
+</script>
+<style type="text/css">
+	td
+	{
+		text-align: center;	
+	}
+</style>
+</head>
+<body>
+	<table border="1" cellpadding="0" cellspacing="0" width="50%">
+		<caption>员工信息</caption>
+		<thead style="background-color:gray;">
+			<tr>
+				<td>姓名</td>
+				<td>薪水</td>
+				<td>年龄</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>张三</td>
+				<td>3000</td>
+				<td>22</td>
+			</tr>
+			<tr>
+				<td>李四</td>
+				<td>4000</td>
+				<td>23</td>
+			</tr>
+			<tr>
+				<td>王五</td>
+				<td>5000</td>
+				<td>26</td>
+			</tr>
+			<tr>
+				<td>赵六</td>
+				<td>2000</td>
+				<td>24</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="button" value="隔行变色" onclick="button1();" />
+	<input type="button" value="加亮1" onclick="button2();" />
+	<input type="button" value="加亮2" onclick="button3();" />
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('ul li:eq(2)').click(function(){
+			$(this).css('font-size','30px')	;
+		});
+		
+		$('#b1').click(function(){
+			var $obj = $('ul li:eq(2)').clone();
+			$('ul').append($obj);
+		});
+	});
+</script>
+</head>
+<body>
+	<ul>
+		<li>item1</li>
+		<li>item2</li>
+		<li>item3</li>
+	</ul>
+	<input type="button" value="点击" id="b1"/>
+</body>
+</html>

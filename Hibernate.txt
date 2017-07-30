@@ -1,0 +1,204 @@
+1、Hibernate的基本概念
+	1)Hibernate框架的作用和优点
+		Hibernate框架是一个数据访问框架。通过Hibernate框架可以对数据库进行增删改查操作。(持久层框架)
+
+		Hibernate优点：
+			(1)简单，可以简化数据库操作的代码
+			(2)Hibernate可以自动生成sql语句，可以将ResultSet记录和实体类自动映射。
+			(3)Hibernate具有通用性，可以方便数据库移植。
+
+		原有JDBC访问的缺点：
+			(1)需要编写大量的复杂的SQL语句
+			(2)需要编写实体对象和记录之间的映射代码
+			(3)数据库移植时，需要修改大量的SQL语句
+
+	2)Hibernate设计思想
+		Hibernate是对JDBC技术的封装，Hibernate是基于ORM思想设计的。
+			O:Object
+			R:Relation
+			M:Mapping
+		三者称为对象关系映射
+		Hibernate是一款ORM工具，还有MyBatis，JPA。
+		ORM特点：
+			ORM工具在完成Java对象和数据库之间映射后，在查询时可以直接利用工具取出对象；在增删改操作时，直接利用工具将对象更新到数据库表中。中间的SQL和JDBC细节都被封装在工具的底层，不需要程序员参与。
+
+2、Hibernate的基本使用
+	1)Hibernate主要结构
+		a、hibernate.cfg.xml (仅一个)，Hibernate主配置文件，主要定义数据库连接参数和框架设置参数
+		b、实体类(多个，一个表一个实体类)，主要用于封装数据库数据
+		c、hbm.xml映射文件(多个)，主要描述实体类和数据表之间的映射信息，描述表<---->类型，字段<---->属性的对应关系
+	2)Hibernate主要API
+		a、Configuration
+			用于加载Hibernate.cfg.xml配置信息，用于创建SessionFactory
+		b、SeesionFactory
+			存储了hbm.xml中描述的信息，内置一些预编译的SQL，创建Session对象
+		c、Seesion
+			负责对数据表执行增删改查操作，表示java程序与数据的一次连接会话
+		d、Query
+			负责对数据表执行特殊的查询操作
+		e、Transaction
+			负责Hibernate操作的事务管理，默认情况下，Hibernate事务关闭了自动提交功能，需要显式追加事务管理。
+	3)Hibernate主要使用步骤
+		a、建立数据库表
+		b、建立java工程，引入Hibernate开发包和数据库驱动包
+		c、添加src/hibernate.cfg.xml追加配置参数
+		d、编写Entity实体类
+		e、编写hbn.xml映射描述信息
+		f、利用Hibernate API实现DAO
+
+3、Hibernate映射类型
+	hbm.xml在描述字段和属性映射时，采用type属性指定映射类型
+	映射类型作用：主要负责实现属性和字段值之间的转化
+	type映射类型有两种写法：
+		a、指定Java类型，例如：java.lang.String, java.lang.Integer
+		b、指定Hibernate类型(推荐)，具体如下：
+			--整数：byte，short，integer，long
+			--浮点数：float，double
+			--字符串：string
+			--时间日期：date(只处理年、月、日),
+						time(只处理时、分、秒)
+						timestamp
+				java.util.Date:只有年月日
+				java.sql.Date:包括年、月、日、时、分、秒
+			--布尔值：yes_no,true_false		
+				boolean  	<---------------------->	char(1)
+				true/false  <------	yes_no		--->	Y/N
+				true/false  <------	true_false	--->	T/F
+			--其它：blob(字节)，clob(字符)，big_decimal，big_integer
+
+4、Hibernate主键生成方式
+	Hibernate负责管理主键值。
+	Hibernate提供了多种主键生成方式，主要有以下几种：
+		a、sequence
+			可以按指定序列生成主键值，适用于Oracle数据库。
+			<generator class="sequence">
+				<param name="sequence">序列名字</param>
+			</generator>
+
+		b、identity
+			按数据库自动增长机制生成主键值。一般适用于MySql，SQLServer数据库。
+			<generator class="identity"></generator>
+
+		c、native
+			Hibernate会根据方言类型不同，选择不同的主键生成方式。如果是OracleDialect会选择sequence，如果是MySQLDialect会选择identity
+			<generator class="native"></generator>
+
+		d、assinged (数据库通用)
+			Hibernate会放弃主键自动生成，若采用此方法，需要在程序中指定主键值。
+			<generator class="assigned"></generator>
+
+		e、increment (数据库通用，并发量小的时候也可以使用，如果并发量大的话不推荐使用)
+			Hibernate先执行select max(id)语句获取主键最大值，执行加1操作，然后再调用insert语句插入。
+			<generator class="increment"></generator>
+
+		f、uuid、hilo
+			uuid指的是按UUID算法生成一个主键值(字符串)，hilo指的是按高低位算法生成一个主键值(数值)。
+			<generator class="uuid"></generator>
+
+5、Hibernate基本特性
+	(1)对象持久性
+		在Hibernate使用过程中，实体对象可以具有以下三种状态。
+			a、临时状态
+				采用new关键字创建的对象，该对象未与Session发生关联
+			b、持久状态
+				实体对象与Session发生关联，例如调用了Session的get，load，save，update等方法。
+				处于持久状态的对象具有以下特点：
+					--对象生命期持久，垃圾回收期不能回收。
+					--对象的数据可以与数据库同步，由Session对象负责管理和同步。
+					--对象在Session的一级缓存中存放
+
+				当持久对象数据改变后，调用Session.flush()方法，会与数据库同步更新，Transaction.commit()方法，内部也会调用flush()，因此使用commit()方法的时候可以省略flush()方法的调用。
+			c、游离状态
+				原来是持久状态，后来不受Session管理。
+
+			批量操作，要即时的清除
+			Configuration cf = new Configuration();
+			cf.config("....");
+
+			Session session = cf.openSession();
+			Transaction ta = session.beginTransaction();
+
+			for(int i = 0;i < 100000;++i){
+				Foo foo = new Foo();
+				...
+				session.save(foo);
+				if((i + 1) % 50 == 0){
+					session.flush();
+					session.clear();
+				}
+			}
+
+			ta.commit();
+			session.close();
+
+	(2)一级缓存机制(默认启用)
+		一级缓存被称为Session级别的缓存。每个Session都有自己独立的缓存区，该缓存区随着Session创建而开辟，随着Sesssion关闭而清除。
+		该缓存区可以存储当前Session关联的对象(持久对象)。
+		一级缓存的好处：Hibernate在查询时，先去缓存区查找，如果缓存区中没有，则采取DB查询，如果在缓存区中存在，则直接从缓存区返回。即：如果利用Session对同一个对象查询多次，第一次去DB，后续则会从缓存区中获取，从而减少了与DB的交互次数。
+		管理一级缓存的方法如下：
+			Session.evict(obj);将obj对象清除
+			Session.clear();清除缓存中所有对象
+			Session.close();清除缓存中所有对象并关闭与数据库的连接
+
+	(3)延迟记载机制
+		Hibernate在使用时，有些API操作是具有延迟加载机制的。
+		延迟加载机制特点：当通过Hibernate的API获取一个对象结果后，该对象并没有数据库数据，当通过对象的getter方法获取属性值时才去数据库查询加载。
+			a、具有延迟加载机制的操作如下：
+				--Seesion.load查询
+				--Query.iterator查询
+				--获取关联对象的属性信息
+			b、常犯错误：
+				LazyInitializationException:could not initialize proxy - no Session：代码中使用了延迟加载操作，但是Session在加载数据前关闭了。
+			c、延迟加载原理
+				在使用延迟加载操作后，Hibernate返回的对象是Hibernate利用cglib/javassist技术新生的一个类型，该类型继承于原来的实体类型。在新类型中，将属性的getter方法重写。
+				public class ***$$******* extends ***{
+					public String get****(){
+						//判断是否加载过数据
+						//如果加载过，返回属性值
+						//如果未加载，发送SQL查询语句加载数据，并返回属性值。
+					}
+				}
+				javassist.jar/cglib.jar(生成新类型)---->载入类加载器----执行
+			d、Session的get和load方法的区别：
+				相同点：
+					两者都是按主键做条件查询。
+				不同点：
+					--get是即时加载；load是延迟加载。
+					--get返回的对象类型是实体类型；load返回的是动态生成的一个代理类。该代理类是实体类的子类。
+					--get未查到数据返回null；load未查到数据抛出ObjectNotFoundException异常。
+			e、延迟加载机制好处
+				--提高内存使用率
+				--可以降低并发量
+
+6、综合练习
+	重构项目模块(WebProject2)			
+	1)添加Hibernnate开发框架
+		--jar包
+		--主配置hibernate.cfg.xml文件
+	2)采用Hibernate操作COST表
+		--实体类
+		--追加Cost.hbm.xml(注意：实体类必须与hbm.xml必须保持一致)
+	3)按CostDAO重构一个DAO实现组件
+	4)修改DAOFactory，将CostDAO采用Hibernate实现的DAO实例化
+	5)测试项目模块功能
+
+===================================
+在JavaWeb程序中如何使用延迟加载操作
+*.action---->Action---->DAO---->JSP(利用标签或者EL表达式获取数据，会触发延迟加载操作)---->生成响应HTML页面给浏览器
+
+基于上述原因，在DAO中不能关闭Session，需要将Session关闭延迟到JSP解析之后。这种模式被称为OpenSeesionInView。该模式可以采用一下技术实现：
+	--利用Struts2拦截器，基于ThreadLocal技术，改造HibernateUtil工具类
+		public void intercept(ActionInvocation ai){
+			//action之前调用
+			in.invoke();//执行action，result
+			//result之后调用，关闭Session
+		}
+
+	--利用Fillter过滤器
+		public void doFilter(request,response,chain){
+			//前期处理逻辑
+			chain.doFilter(request,response)
+			//后期处理逻辑，关闭Session
+		}
+
+	--利用Spring的AOP机制	

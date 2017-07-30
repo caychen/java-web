@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.s1{
+		width: 100px;
+		height: 100px;
+		background-color: red;
+	}
+	.s2{
+		background-color: yellow;
+	}
+</style>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		//分开事件
+		/*$(".s1").mouseenter(function(){
+			$(this).addClass('s2');
+		});
+		$(".s1").mouseleave(function(){
+			$(this).removeClass('s2');
+		});*/
+		
+		//合成事件
+		$('.s1').hover(function(){
+			//光标进入时
+			$(this).addClass('s2');
+		},function(){
+			//光标离开时
+			$(this).removeClass('s2');
+		});
+		
+		$('a').toggle(function(){
+			//第一次点击
+			$('#d1').show('slow');
+		},function(){
+			//第二次点击
+			$('#d1').hide('slow');
+		});
+		
+	});
+</script>
+</head>
+<body>
+	<div class="s1"></div>
+	<br/><br/><br/>
+	<a href="javascript:;">显示所有票价</a>
+	<div id="d1" style="display:none;">
+		头等舱:￥2400<br/>
+		商务舱:￥2200<br/>
+		经济舱:￥1200<br/>
+	</div>
+</body>
+</html>

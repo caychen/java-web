@@ -1,0 +1,78 @@
+1、servlet线程安全问题
+	(1)为什么说servlet会有线程安全问题？
+		当容器收到一个请求之后，会启动一个线程来处理该请求，如果有多个请求到达容器，并且这多个请求要访问的是同一个servlet，则会发生多个线程调用同一个servlet的情况。此时，就需要考虑线程安全问题了。比如，这多个线程都要修改servlet的属性值。
+	(2)如何处理线程安全问题
+		a、加锁，
+			方法加上synchronized关键字，或者加上synchronized代码块，加锁会影响一些性能。
+		b、让一个servlet实现SingleThreadModel接口。容器会为实现SingleThreadModel接口的servlet创建多个实例，即一个线程一个实例。因为有可能会产生过多的servlet实例，所以，在比较大型的应用当中，尽量少用。
+
+2、jsp标签和el表达式
+	(1)什么是jsp标签？
+		sun公司制订的一种技术规范，liyongjsp标签(类似于html标签)来代替jsp中java代码。这样做的好处是，jsp页面会更简洁，并且更好维护。
+	(2)什么是jstl？
+		java standard taglib(java标准标签库，apache开发了一套标签，捐献给了sun，sun将其命名为jstl)。
+		a、将jstl标签对应的jar文件(jstl.jar/standard.jar)拷贝到WEB-INF\lib下
+		b、使用taglib指令引入jsp标签。
+	(3)什么是el表达式？
+		是一套简单的计算规则，用于给jsp标签的属性赋值，也可以直接输出。
+	(4)el表达式的使用
+		a、访问bean的属性
+			1)、第一种方式：(Web16/a3.jsp)
+				比如${user.name}:容器会依次从pageContext、request、session、application中查找(getAttribute)绑定名为"user"的对象，接下来会调用该对象的getName方法，最后输出执行结果。
+					依次：先从pageContext中查找，如果找不到，再查找request，如果找到了，则不再向下查找。
+				相比于直接写java代码，有两个优点：
+					i、会将null转换成""输出
+					ii、如果绑定名称对应的值不存在，不会报空指针异常，而会输出""
+
+				如果要指定查找范围，可以使用pageScope，requestScope，sessionScope，applicationScope
+			2)、第二种方式：(Web16/a4.jsp)
+				比如${user["name"]},优点：
+					i、[]里面允许出现变量
+					ii、[]里面允许出现从0开始的下标，用来访问数组中的某个元素	
+		b、进行一些简单的计算，计算结果可以用来给jsp标签属性赋值，可以直接输出。(Web16/a4.jsp)
+			i、算术运算：其中+号不能连接字符串
+			ii、关系运算：
+			iii、逻辑运算
+			iv、empty运算：判断是否是一个空字符串，或者是一个空集合，如果是，返回true
+				以下情况都是true:
+					iv-i、空字符串
+					iv-ii、空集合
+					iv-iii、null
+					iv-iv、找不到值
+
+		c、获取请求参数值(Web16/a4.jsp)
+			${param.username} 等价于
+			request.getParameter("username");
+
+			${paramValues.city} 等价于
+			request.getParameterValues("city")
+
+	(5)jstl中的几个核心标签(Web16/a5.jsp)
+		1)if
+			<prefix:if test="" var="" scope="" >
+				标签体
+			</prefix:if>
+			当test属性值为true，则执行标签体的内容，test属性可以使用el表达式
+			var属性用来绑定名称
+			scope属性指定绑定的范围，可以是"page","request","session","application"
+		2)choose(Web16/a6.jsp)
+			<prefix:choose>
+				<prefix:when test="">
+				</prefix:when>
+				...
+				<prefix:otherwise>
+				</prefix:otherwise>
+			</prefix:choose>
+			when和otherwise必须要放到choose标签里面才能使用，when可以出现1次或者多次，而otherwise可以出现0次或者1次。
+		3)forEach(Web16/a7.jsp+web/ListPersonsServlet.java)
+			<prefix:forEach var="" items="" varStatus="">
+			</prefix:forEach>
+			用来遍历集合.
+			items属性用来指定要遍历的集合，可以使用el表达式。
+			var属性指定绑定名，绑定范围是pageContext，绑定值是集合中的某个元素。
+			varStatus属性指定绑定名，绑定范围是pageContext，绑定值是一个由容器创建的一个对象，该对象封装了当前迭代的状态。比如，该对象提供了getIndex，getCount方法，其中，getIndex会返回当前迭代的元素的下标(从0开始)，getCount会返回当前迭代的次数(从1开始)
+
+	(6)jsp标签运行
+		容器依据命名空间找到(WEB-INF)标签的描述文件，接下来，依据标签的名称找到标签类的类名，然后将该标签类实例化
+			注意：
+				容器会从WEB-INF下查找，如果找不到，还会查找WEB-INF\lib下的jar文件

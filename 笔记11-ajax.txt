@@ -1,0 +1,85 @@
+1、ajax
+	(1)什么是ajax？
+		asynchronous javascript and xml(异步的javascript和xml)
+		是一种用来改善用户体验的技术，其实质是利用浏览器内置的一个特殊的对象(XMLHttpRequest，一般称之为ajax对象)异步地(ajax对象在向服务器发送请求时，浏览器不会销毁当前页面，用户仍然可以对当前页面做其他的操作)向服务器发送请求，服务器送回部分数据(不是一个完整的新的页面，而是文本或者xml文档)，在浏览器端，可以利用这些数据部分更新当前页面，那么整个过程，页面无刷新，不打断用户的体验。
+	(2)ajax对象
+		1)如何获得ajax对象？
+			XMLHttpReuqest没有标准化，要区分浏览器
+			function getXhr(){
+				var xhr = null;
+				if(window.XMLHttpRequest){
+					//非IE浏览器
+					xhr = new XMLHttpRequest();
+				}else{
+					//IE浏览器
+					xhr = new ActiveXObject('Microsoft.XMLHttp');
+				}
+				return xhr;
+			}
+		2)属性
+			a、onreadystatechange：
+				绑定一个事件处理函数，该函数处理readystatechange事件
+				ajax对象的readState属性发生了改变，比如从0--->1，则会产生readyStatechange事件
+			b、responseText：获得服务器返回的文本数据
+			c、responseXML：获得服务器返回的xml文档
+			d、status：获得状态码
+			d、readyState：共有5个值，分别是0，1，2，3，4，表示ajax对象与服务器通讯的状态，其中，4表示ajax对象已经获得了服务器返回的所有的数据。
+
+	(3)编程步骤
+		a、获得ajax对象
+			比如：
+				var xhr = getXhr();
+		b、使用ajax对象发请求
+			参数：
+				参数1：get/post
+				参数2：请求路径(get请求如果有参数需要添上参数，post请求参数放在send里)
+				参数3：异步请求/同步请求
+					true：表示异步请求(ajaxd对象发请求时，用户可以对当前页面做其他操作)
+					false：表示同步请求(ajax对象发请求时，浏览器会锁定当前页面，用户只能等待)
+			1)发送get请求
+				xhr.open('get','***.do?username=zs',true);
+				xhr.onreadystatechange = fun;
+				xhr.send(null);
+			2)发送post请求
+				xhr.open('post','***.do',true);
+				xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');
+				xhr.onreadystatechange = function(){};
+				xhr.send('username=zs&...');
+			3)注意区别：
+				i、post请求与get请求不同，post请求参数要放到send方法里面；
+				ii、因为按照http协议的要求，发送post请求时，应该发送一个content-type消息头，而xhr对象在默认情况下，不会发送这个消息头，所以需要手动调用setRequestHeader方法来添加。
+
+		c、编写服务器端的处理程序，跟以前相比，有一点改变，就是一般不需要返回一个完整的页面，而只需要返回部分的数据。
+		d、编写事件处理函数
+			function fun(){
+				if(xhr.readyState == 4){
+					var txt = xhr.responseText;
+					dom操作...
+				}
+			}
+
+	(4)编码问题
+		1)发get请求
+			a、乱码问题产生的原因：
+				IE浏览器内置的ajax对象会使用gbk对中文参数进行编码，而其他浏览器内置的ajax对象会使用utf-8对中文参数进行编码。而服务器端，默认会使用ISO-8859-1去解码，因为编码与解码所使用的字符集不一致，所以会出现乱码问题。
+			b、解决：
+				i、设置服务器使用指定的字符集去解码，比如可以修改tomcat的server.xml，修改后重新启动服务器。
+					URIEncoding="utf-8":告诉服务器，对于所有的get请求，默认使用"utf-8"去解码。
+				ii、使用encodeURI函数对请求地址进行编码，encodeURI函数会使用utf-8进行编码。
+
+		2)发post请求
+			a、乱码问题产生的原因：
+				所有浏览器内置的ajax对象都会使用utf-8对中文参数进行编码，而服务器默认情况下，会使用ISO-8859-1进行解码
+			b、解决
+				request.setCharacterEncoding("utf-8");
+
+	(5)缓存问题
+		a、当发送get请求时，IE浏览器内置的ajax对象会检查请求地址是否访问过，则不再发送请求。
+		b、解决方式：
+			方式一：在请求地址的后面添加一个随机数，比如xhr.open('get','***.do?' + Math.random(), true);
+			方式二：使用post方式发送请求。
+
+	(6)ajax优点
+		a、页面无刷新，不打断用户的操作
+		b、按照需要获取数据，减少客户端(浏览器)与服务器端数据传输的大小。
+		c、是一种标准化的技术，不需要用户下载任何的插件。

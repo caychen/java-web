@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.s1{
+		background-color: yellow;
+	}
+</style>
+<script type="text/javascript" src='js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('tbody tr').click(function(){
+			var flag = $(this).hasClass('s1');
+			//alert($(this).children('td:eq(0)').children().attr('checked'));
+			if(flag == true){
+				$(this).children('td:eq(0)').children().attr('checked',false);
+				$(this).removeClass('s1');
+		//		alert('111');
+			}
+			else{
+				$(this).children('td:eq(0)').children().attr('checked',true);
+				$(this).addClass('s1');
+			//	alert('222');
+			}
+			
+			//$(this).toggleClass('s1');
+		})
+	})
+</script>
+</head>
+<body>
+<table border="1" cellpadding="0" cellspacing="0" width="50%">
+		<caption>员工信息</caption>
+		<thead style="background-color:gray;">
+			<tr>
+				<td></td>
+				<td>姓名</td>
+				<td>薪水</td>
+				<td>年龄</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td>张三</td>
+				<td>3000</td>
+				<td>22</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td>李四</td>
+				<td>4000</td>
+				<td>23</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td>王五</td>
+				<td>5000</td>
+				<td>26</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td>赵六</td>
+				<td>2000</td>
+				<td>24</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$('#b1').click(function() {
+			//var $obj = $('#d1').children('div');
+			//alert($obj.length);
+			
+			var $obj = $('#d4').next();
+			alert($obj.html());
+		})
+	})
+</script>
+</head>
+<body>
+	<div id="d1">
+		<div id="d2">hello1</div>
+		<div id="d3">hello2</div>
+		<div id="d4">hello3</div>
+		<p>hello4</p>
+	</div>
+	<input type="button" value="点击" id="b1"/>
+</body>
+</html>

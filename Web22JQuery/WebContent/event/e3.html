@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	#d1,#d2{
+		width: 200px;
+		height: 200px;
+		border: 1px solid red;
+	}
+</style>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	function f1(){
+		alert('111');
+		
+	}
+	
+	function f2(){
+		alert('222');
+	}
+	
+	function f3(){
+		alert('333');
+	}
+	
+	function f4(e){
+		alert('444');
+		//取消冒泡事件
+		e.cancelBubble = true;
+		getClient(e);
+	}
+	
+	function getClient(e){
+		alert(e.clientX + "," + e.clientY);
+	}
+</script>
+</head>
+<body>
+	<div id="d1" onclick="f1();">
+		<a href="javascript:;" onclick="f2();">Click Me</a>
+	</div>
+	
+	<br/>
+	<div id="d2" onclick="f3();">
+		<a href="javascript:;" onclick="f4(event);">Click Me</a>
+	</div>
+</body>
+</html>

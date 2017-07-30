@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+	function f1() {
+		//为了避免冲突，可以将jquery的$函数换一个名字$a
+		var $a = jQuery.noConflict();
+		
+		$('d1').innerHTML = "HELLO java";
+		$a('#d1').css('font-size','60px');
+	}
+</script>
+</head>
+<body>
+	<div id="d1" onclick="f1();">hello jquery</div>
+</body>
+</html>

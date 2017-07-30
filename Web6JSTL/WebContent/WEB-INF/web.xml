@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>Web6</display-name>
+  
+  <!--配置错误页面-->
+  <error-page>
+  	<!--错误类型为完整的路径，包括包和类名-->
+  	<exception-type>javax.servlet.ServletException</exception-type>
+  	<location>/syserror.jsp</location>
+  </error-page>
+  <servlet>
+  	<servlet-name>action</servlet-name>
+  	<servlet-class>Web.ActionServlet</servlet-class>
+  	<init-param>
+  		<param-name>perPage</param-name>
+  		<param-value>5</param-value>
+  	</init-param>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>action</servlet-name>
+  	<url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+</web-app>

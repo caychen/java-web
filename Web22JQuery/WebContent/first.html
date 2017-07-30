@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		//为了强调这是一个jquery对象，故使用$开头来区分
+		var $obj = $('#d1');
+		$obj.css('font-size','60px').css('font-style','italic');
+	}
+	function f2(){
+		$('#d2').css('color','red');
+	}
+	
+	function f3(){
+		var obj = document.getElementById('d3');
+		//将dom对象封装成jquery对象
+		var $obj = $(obj);
+		
+		$obj.html('hello java');
+	}
+	
+	function f4(){
+		var $obj = $('#d4');
+		//将jquery对象转换成dom对象
+		var obj = $obj.get(0);//$(obj).get()[0]
+		obj.innerHTML = "hello javaweb";
+	}
+</script>
+</head>
+<body>
+	<div id="d1" onclick="f1();">hello jquery</div>
+	<div id="d2" onclick="f2();">hello jquery</div>
+	<div id="d3" onclick="f3();">hello jquery</div>
+	<div id="d4" onclick="f4();">hello jquery</div>
+</body>
+</html>

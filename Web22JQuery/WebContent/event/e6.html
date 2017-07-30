@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('#b1').click(function(){
+			//模拟用户点击了username文本输入框
+			//让username文本输入框产生焦点获得事件
+			
+			//$('#username').trigger('focus');
+			$('username').focus();//简写形式
+		});
+	});
+</script>
+</head>
+<body>
+	username:<input name="username" id="username"/><br/>
+	name:<input name="name"/><br/>
+	<input type="button" value="Click" id="b1" />
+</body>
+</html>

@@ -1,0 +1,29 @@
+1)了解原功能的处理流程
+	***.action
+	---> ActionClass.execute()
+	---> DAO.***()
+	---> ***.action
+
+2)重构DAO(Spring+Hibernate)
+	--追加Spring开发包和配置文件
+	--追加实体类，并在spring的applicationContext.xml中添加实体映射(***.hbm.xml)
+	--基于SessionFactory编写DAO实现组件
+
+3)DAO的Spring配置
+	--将DAO扫描到Spring容器
+	--将容器中的dataSource--->SessionFactory--->DAO组件
+
+4)修改ActionClass
+	--将Action扫描到Spring容器中(@注解)
+	--采用注入方式使用DAO组件对象(@Resource)
+	--在业务方法上定义@Transactional事务注解
+
+5)修改ActionClass的struts配置
+	--将class属性改成与扫描到Spring容器后的Action组件的id值
+
+6)检查共通的操作是否完成
+	--是否引入struts-spring-plugin.jar
+	--是否在web.xml中添加ContextLoaderListener
+	--是否开启了组件扫描配置
+	--是否开启了注解事务配置
+	--是否配置了dataSource，sessionFactory，实体映射文件

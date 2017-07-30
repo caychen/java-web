@@ -1,0 +1,61 @@
+1、Spring对数据访问技术的支持
+	1)Spring提供了统一的异常处理类型(DataAccessException)
+	2)Spring提供了编写DAO的支持类
+		DaoSupport：JdbcDaoSupport，HibernateDaoSupport
+		Template：JdbcTemplate，HibernateTemplate
+	3)Spring提供了声明式事务管理方法(基于AOP配置实现)
+
+2、Spring框架如何使用JDBC技术(Spring_03)
+	1)新建web工程，引入Spring开发包和配置文件
+	2)引入JDBC技术相关的开发包(驱动包)
+	3)根据要操作的表，编写对应的实体类
+	4)编写DAO接口和实体类(实现类继承DaoSupport，使用其提供的Template对象实现增删改查操作)
+		update():实现增删改查
+		query():实现查询多条记录
+		queryForObject():实现单行记录，其中获取int或者long的话，请使用：
+			getJdbcTemplate().queryForObject(sql, Integer/Long.class).intValue()/longValue()
+	5)将DAO组件交给Spring容器，进相关配置
+		--定义DAO组件的<bean>元素
+		--需要给DAO的Bean注入一个dataSource对象
+		--dataSource对象采用一个连接池构建(dbcp连接池/c3p0)，先引入dbcp连接池(c3p0)开发包，再定义dataSource对象<bean>元素
+		------------连接池优点-------------
+		a、增强数据访问的稳定性
+		b、连接池可以将连接数控制在范围内
+		c、连接池中的连接对象始终与数据库保持联通状态，避免了重复的新建连接和释放连接过程。
+
+3、Spring框架如何使用Hibernate技术(Spring_04)
+	1)新建web工程，引入Spring开发包和配置文件
+	2)引入Hibernate相关的开发包(包括驱动，配置信息放入Spring的配置文件)
+	3)编写实体类和hbm.xml映射描述文件
+	4)编写DAO接口和实现类(实现类继承HibernateDaoSupport，利DaoSupport提供的HibernateTemplate实现增删改查)
+	5)将DAO组件交给Spring容器管理。
+
+	注意：Spring4已经不建议使用HibernateTemplate，而是直接使用SessionFactory注入，具体参见/Spring_04/src/org/com/dao/impl/HibernateCostDao.java
+	并且，在获取Session的时候，使用SessionFactory.getCurrentSession();
+
+	DAO组件配置时，采用下面的注入关系：
+		DAO对象<----注入SessionFactory对象<-----注入DataSource对象(dbcp连接池)
+
+4、Spring+Hibernate如何使用Session、Query等对象
+	1)利用HibernateDaoSupport提供的getSession()方法。
+		Session session = getSession();//利用session操作
+		session.close();//注意释放session
+	2)利用HibernateTemplate.execute()方法，以回调函数方式使用，在回调函数中使用Session
+
+		public List<Cost> findByPage(int page, int pageSize) {
+			// TODO Auto-generated method stub
+			List<Cost> list = getHibernateTemplate().execute(new HibernateCallback<List<Cost>>() {
+
+				@Override
+				public List<Cost> doInHibernate(Session session) throws HibernateException, SQLException {
+					// TODO Auto-generated method stub
+					String hql = "from Cost";
+					Query query = session.createQuery(hql);
+					int begin = (page - 1) * pageSize;
+					query.setFirstResult(begin);
+					query.setMaxResults(pageSize);
+					return query.list();
+				}
+			});
+			return list;
+		}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+	function getXhr(){
+		var xhr = null;
+		if(window.XMLHttpRequest){
+			//非IE浏览器
+			xhr = new XMLHttpRequest();
+		}else{
+			//IE浏览器
+			xhr = new ActiveXObject('Microsoft.XMLHttp');
+		}
+		return xhr;
+	}
+</script>
+</head>
+<body>
+	<a href="javascript:;" onclick="alert(getXhr());">测试ajax对象</a>
+</body>
+</html>

@@ -1,0 +1,38 @@
+Spring MVC
+1、了解Spring MVC体系结构
+	控制器：DispatcherServlet，Controller
+	映射处理器：HandlerMapping
+	模型和视图组件：ModelAndView
+	视图解析器：ViewResolver
+
+2、了解Spring MVC的工作流程
+	1)客户端发送请求，请求到达DispatcherServlet主控制器；
+	2)DispatcherServlet控制器调用HandlerMapping处理；
+	3)HandlerMapping负责维护请求和Controller组件之间的对应关系，HandlerMapping根据请求调用对应的Controller组件处理；
+	4)执行Controller组件的业务处理方法，需要访问数据库可以调用DAO等组件；
+	5)Controller业务方法处理完毕后，会放一个ModeAndView对象，该组件封装了模型数据和视图的标识；
+	6)Servlet主控制器调用ViewResolver组件根据ModelAndView信息处理。定位视图资源，生成视图响应信息。
+	7)控制器将响应信息作为客户端输出。
+
+3、入门示例
+	a、基于XML配置(项目Spring_MVC)
+		login.do
+		-----> LoginController
+		-----> login.jsp
+
+	b、注解配置(项目Spring_MVC_annotation)
+		--HandlerMapping组件选用org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter，该组件支持@RequestMapping注解的使用，value属性指定为请求的url，methon为请求的提交方式(主要为GET/POST)
+		--使用组件扫描，在Controller组件中使用@Controller注解，将组件扫描到Spring容器中
+
+		Controller中业务方法可以定义成以下格式：
+		//方法1、传递一个实体对象：实体类属性名称必须跟发送过来的表单的各个表单项的name保持一致
+		//方法2、可以任意传递一个HttpServletRequest、HttpServletResponse等等任意组合的参数，需要什么就添加什么
+		//Model可以用于将参数传递给下一个页面
+
+			public String f1();
+			public ModelAndView f1();
+			public String f1(HttpServletRequest request);
+			public String f1(HttpServletRequest request, HttpServletResponse response);
+			public String f1(Entity entity);
+			public String f1(Model model);
+			public String f1(Entity entity, Model model);

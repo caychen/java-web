@@ -1,0 +1,182 @@
+1、关联映射(Hibernate_03)
+	关联映射主要是在对象之间建立关系。开发者可以通过关系进行信息查询、添加、删除和更新操作。
+
+2、一对多关系(1:N)
+	关系建立方法
+		--在Account中添加Set/List集合属性
+		--在Account.hbm.xml中添加属性描述
+			如使用Set(若使用List，则把set改成list)
+				<set name="属性名">
+					<key column="指定关联条件的外键字段，默认与该类的主键关联"></key>
+					<one-to-many class="要关联加载的另一方的类名"></one-to-many>
+				</set>
+
+				例如：
+					<!-- 描述services属性，采用一对多关系加载Service记录 -->
+			        <set name="services">
+			        	<!-- 关联条件，column写外键字段，默认与该Account类的主键关联 -->
+			        	<key column="ACCOUNT_ID"></key>
+			        	<!-- 指定采用一对多关系，class指定关联的类型 -->
+			        	<one-to-many class="entity.Service" />
+					</set>
+					测试，采用account.getServices()方法获取相关Service记录
+
+3、多对一关系(N:1)
+	关系建立方法
+		--在N方Service中添加Account属性
+		--在N方Service.hbm.xml中描述书信
+		<many-to-one name="属性名" class="要关联的1方的类型名" column="关联条件的外键字段"></many-to-one>
+		此外要删除Service中原有的外键字段映射属性和映射描述
+
+		例子：
+			<!-- 描述account，采用many-to-one关系加载 -->
+	        <many-to-one name="account" class="entity.Account" column="ACCOUNT_ID">
+	        </many-to-one>
+	    测试，通过service.getAccount()获取相关的Account信息。
+
+4、关联操作
+	1)查询操作
+		建立关联映射后，默认情况下在调用关联属性的getter方法时，会另外发送一个SQL加载关系表数据。
+		如果需要将关联数据与主对象一起加载，可以采用下面方法：
+			a、在关联属性映射描述中，使用lazy="false"，fetch="join"
+			<set name="services" lazy="false" fetch="join">
+        		<key column="ACCOUNT_ID"></key>
+        		<one-to-many class="entity.Service" />
+       		</set>
+
+       		b、编写HQL，次啊用join fetch关联属性方式实现。(推荐使用)
+    2)级联操作
+    	当对主对象增删改时，可以对关系属性中的数据也响应的执行增删改操作。
+    	级联操作默认关闭，如果需要使用，哭在关联属性映射部分添加cascade属性，属性值如下：
+    		none：默认值，不支持级联
+    		delete：级联删除
+    		save-update：级联添加和更新
+    		all：级联添加、删除、更新
+
+    3)inverse属性作用
+    	默认情况下，采用了级联操作，Hibernate在执行insert，update，delete基本操作后，还要执行update关系字段值的操作(即关系维护工作)。默认是关联对象双方都要负责关系维护。可以采用inverse="true"设置，将这项工作交给对方负责。遇到一对多和多对一关系映射时，在one-to-many一方添加inverse="true"
+
+    4)级联删除
+    	提示：在批量删除情况下，建议采用HQL语句的方式，例如：delete from Service where account.id=?;
+    	delete from Account where id=?;
+
+5、多对多关联映射
+	数据库设计是采用3张数据表，有一张是关系表 
+		ADMIN---->ADMIN_ROLE<----ROLE
+	关系映射的建立
+		a、在Admin中添加一个集合属性
+		b、在Admin.hbm.xml中定义属性的映射描述
+			<set name="关系属性名" table="中间关系表">
+				<key column="关系表与当前类型的关联字段"></key>
+				<many-to-many clas="关联的另一方类型" column="关系表中与另一方关联的字段"></many-to-many>
+			</set>
+
+			例如：
+		        <set name="roles" table="Admin_Role">
+		        	<key column="ADMIN_ID"></key>
+		        	<many-to-many class="entity.Role" column="ROLE_ID"></many-to-many>
+				</set>
+
+6、继承关系映射
+	可以将数据表映射成具有继承关系的实体类。
+	Hibernate提供了3种方式的继承映射：
+		1)将一个表映射成父类和子类
+			采用<subclass></subclass>描述
+		2)将子类表映射成父类和子类
+			采用<union-subclass></union-subclass>
+		3)将父类表和子类表映射成父类和子类(常用)
+			采用<joined-subclass></joined-subclass>描述子类继承关系映射
+
+7、掌握Hibernate查询方法
+	Hibernate提供了3种数据操作方法
+		a、HQL查询(Hibernate Query Language)(参见Hibernate_04/src/test/TestHQL.java)
+			HQL语句是面向对象的一种查询语言
+			HQL针对于Hibernate映射之后的的实体类型和属性进行查询。
+			HQL和SQL有以下相似点：
+				--都支持select，from，where，group by，order by，having子句
+				--都支持+，-，*，/，>，<，>=，<=，<>等运算符和表达式
+				--都支持in，not in，between...and，null，not null等过滤条件
+				--都支持分组统计函数count，max，min，avg，sum
+
+			HQL和SQL有以下不同点：
+				--HQL区分大小写(除关键字)
+				--HQL使用类名和属性名，不使用数据库的表名和字段名
+				--HQL不能使用select * 写法
+				--HQL不能使用join...on中的on子句
+
+		b、Criteria条件查询(参见Hibernate_04/src/test/TestCriteria.java)
+			Criteria ct = Session.createCriteria(XXX.class);
+
+		c、Native SQL原生SQL查询(参见Hibernate_04/src/test/TestSQLQuery.java)
+			SQLQuery query = session.createSQLQuery(sql);
+
+8、Hibernate高级特性
+	1)二级缓存
+		二级缓存是SessionFactory级别的。由SessionFactory负责管理，通过Factory创建的Session都可以访问二级缓存。
+		二级缓存默认关闭开启方法如下：
+			a、引入ehcache-2.10.1.jar，slf4j-api-1.7.7.jar，hibernate-ehcache-5.1.0.Final.jar，在src下添加ehcache.xml配置文件(可能版本不同，hibernate只需要第一个ehcache.jar包)
+			b、在hibernate.cfg.xml中添加配置参数，指定缓存类型
+				<!-- 开启二级缓存 -->
+			  	<property name="hibernate.cache.use_second_level_cache">
+			  		true
+			  	</property>
+			  
+			  	<!-- 指定二级缓存组件类型 -->
+			  	<!-- for Hibernate4... -->
+			  	<property name="hibernate.cache.region.factory_class">
+			  		org.hibernate.cache.ehcache.EhCacheRegionFactory
+			  	</property>
+			  
+			  	<!-- for Hibernate3... -->
+			 	<!-- 
+				 	<property name="hibernate.cache.provider_class">
+				 		org.hibernate.cache.EhCacheProvider
+				 	</property>
+			 	 -->
+  
+			c、在需要缓存的实体类hbm.xml中，添加<cache usage="只读/读写" region="才有ehcache.xml中哪组参数缓存"/>
+
+		二级缓存管理方法：
+			SessionFactory.evict(XXX.class);//清除某一XXX类型的对象
+			SessionFactory.evict(XXX.class,id);//清除某一个指定id的XXX类型对象
+
+		二级缓存的实用环境
+			--共享数据，数据量不宜太大
+			--该数据更新频率低
+			
+	2)查询缓存
+		一级缓存和二级缓存只能缓存单个对象，像其他类型的数据，例如：一组名称或者一对对象集合都不能缓存。像这种特殊的结果，可以采用查询缓存存储。
+		a、查询缓存默认关闭，启用方法如下：
+			--开启查询对象的二级缓存存储
+			--在hibernate.cfg.xml中设置开启查询缓存参数
+				<!-- 开启查询缓存 -->
+ 				<property name="hibernate.cache.use_query_cache">
+ 					true
+ 				</property>  
+			--在执行query.list()方法之前设置Query.setCacheable(true);
+
+		b、查询缓存的使用环境
+			--共享数据的结果集，结果集中的数据量不宜太大
+			--查询的结果集数据变化非常小
+
+9、Hibernate锁机制
+	Hibernate提供了乐观锁和悲观锁机制，主要用于解决事务并发问题。
+	a、悲观锁：
+		认为任何操作都可能发生并发，因此在第一个线程查询数据时，就把该条记录锁住。此时其他线程对该记录不能做任何操作(即增删改查都不允许)，必须等当前线程事务结束才可以进行操作。Hibernate悲观锁机制实际上是采用DB的锁机制实现。
+			DB:
+				select * from ACCOUNT where id=1 for update;
+			Hibernate:
+				Session.load(XXX.class,1,LockMode.UPGRADE);
+
+		缺点：
+			效率低
+
+	b、乐观锁：
+		认为发生并发几率非常小。相同的记录不同的用户都可以查询访问，当多个人都要修改该记录的时候，只有第一个提交的用户成功，其他的修改会抛出异常，提示失败。该机制是借助与一个版本字段实现：当第一个更新用户提交成功后，hibernate会自动将该版本字段值+1，当其他用户提交，如果版本字段小于DB中的值，会抛出异常，提示失败。
+		乐观锁使用方法：
+			--在表中添加一个版本字段VERSION
+			--在实体类中添加version属性
+			--在实体hbm.xml中定义版本字段映射，
+			<version name="类中版本属性" type="类型">
+        		<column name="表中版本字段名"></column>
+        	</version>

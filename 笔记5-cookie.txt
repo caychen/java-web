@@ -1,0 +1,68 @@
+1、include指令
+	告诉容器，在将.jsp文件转换成.java文件时，在指令所在的位置处插入相应的文件内容。
+	比如：<%@ include file="xxx.jsp"%>
+
+2、转发与重定向的区别
+	(1)转发的目的地只能是同一个应用内某个组件的地址，而重定向的地址是任意的。
+	(2)转发之后，浏览器地址栏的地址不变，而重定向会发生改变。
+	(3)转发所涉及的各个web组件可以共享request对象，而重定向不可以。
+	(4)转发是一件事情未做完，而重定向是一件事已经做完，接着开始下一件事情。
+
+3、状态管理
+	(1)什么是状态管理？
+		将浏览器与web服务器自己建多次交互当作一个整体看待，并且将多次交互所涉及的数据保存下来。
+	(2)如何进行状态管理？
+		第一大类：客户端状态管理技术，即将状态(也就是多次交互所涉及的数据)保存在客户端(浏览器)。
+		第二大类：服务器端状态管理技术，即将状态保存在web服务器端。	
+	(3)cookie
+		1)什么是cookie？
+			a、是一种客户端的状态管理技术。
+			b、当浏览器访问服务器的时候，服务器可以将少量的数据以set-cookie消息头的方式发送给浏览器，浏览器会将这些数据保存下来；当浏览器再次访问服务器时，会将之前保存的这些数据以cookie消息头的方式发送给服务器。
+		2)如何创建一个cookie？
+			//name:cookie名称，value:cookie的值
+			Cookie c = new Cookie(String name, String value);
+			response.addCookie(c);
+		3)查询cookie
+			//如果没有cookie，则返回null
+			Cookie[] request.getCookies();
+			//获得cookie的名称
+			String cookie.getName();
+			//获得cookie的值
+			String cookie.getValue();
+		4)编码问题
+			cookie的名称或者值只允许出现合法的ascii字符串。
+			如果是中文、需要将中文转换成ascii字符串。
+			String URLEncoder.encode(String str, String code);
+			String URLDecoder.decode(String str, String code);
+		5)cookie的生存时间
+			默认情况下，浏览器会将cookie保存在内存空间里，只要浏览器不关闭，cookie会一直存在。如果浏览器一关闭，cookie就会消失。
+			cookie.setMaxAge(int seconds);====>用来修改cookie的生存时间
+			注意：
+				a、seconds：单位是秒。
+				b、
+					当secodes>0时，浏览器会将cookie保存在硬盘上，当cookie保存的时间超过了seconds，则cookie会被浏览器删除。
+					当seconds<0时，缺省值，浏览器会将cookie保存在内存空间里
+					当seconds=0时，表示删除cookie
+					比如，要删除名称为userId的cookie，可以：
+						Cookie c = new Cookie("userId","");
+						c.setMaxAge(0);
+						response.addCookie(c);
+		6)cookie的路径问题
+			a、路径问题指的是：浏览器在向服务器上的某个地址发请求时，会比较请求地址与cookie的路径是否匹配，只有匹配的cookie才会发送。
+			b、cookie有一个默认的路径，值等于创建该cookie的组件的路径，比如，/web/app/addCookie.jsp创建了一个cookie，则该cookie的路径为/web/app/
+			c、匹配规则
+				只有当要访问的地址是cookie的路径或者其子路径时，浏览器才会将这个cookie进行发送。
+				比如：
+					cookie的路径是"/web/app/"，则
+				访问：
+					/web/app/findcookie.jsp能访问到该cookie
+					/web/app/sub/findcookie.jsp也能访问到该cookie
+					/web/findcookie.jsp则不能访问到该cookie
+			d、可以调用cookie.setPath(String path)方法来修改默认的路径。
+				一般会设置cookie.setPath("/appname");这样，应用内部的某个组件所添加的cookie可以被该应用内部的其他组件访问到。
+		7)cookie的限制
+			a、cookie可以被用户禁止
+			b、因为cookie保存在浏览器端，所以cookie不安全。对于一些敏感的数据，需要加密处理。
+			c、cookie只能保存少量的数据，大约是4k
+			d、cookie的个数也有限制，浏览器只能够大约300个左右的cookie，另外对于某个服务器，也有cookie个数的限制，大约是20个。
+			e、cookie只能够保存字符串中。

@@ -1,0 +1,70 @@
+1、Spring框架和Struts2整合应用(Spring_05)
+	1)将Action、DAO等组件交给Spring容器
+	2)引入Struts2和Spring整合的开发包 struts-spring-plugin.jar
+		当struts请求过来时，Action对象将交给整合包去Spring容器中获取
+		3)修改strtus.xml中的<action></action>配置，将action的class属性与Spring容器中<bean></bean>元素的id属性保持一致
+		整合包利用class值当作id标识去Spring容器获取Bean对象
+	4)在web.xml中添加ContextLoaderListener组件配置
+		可以在启动服务器时，实例化Spring容器对象
+
+	例子：
+		<!-- 指定Spring配置文件位置和名称 -->
+		<!-- 在服务器启动时，实例化Spring容器 -->
+		<context-param>
+			<param-name>contextConfigLocation</param-name>
+		  	<param-value>classpath:/applicationContext.xml</param-value>
+		</context-param>
+		<listener>
+		  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		</listener>
+
+2、采用SSH结构重构资费管理模块
+	原功能采用Struts2+Hibernate结构利用OpenSessionInViewInterceptor控制事务和Session关闭
+
+	--采用SSH结构需要追加以下步骤：
+		1)引入Spring开发包和配置文件
+		2)编写DAO组件，采用Spring+Hibernate方式实现
+		3)在Spring容器配置中定义DAO组件
+			--将DAO扫描到Spring容器
+			--将SessionFactory给DAO注入
+			--引入连接池开发包并定义dataSource
+		4)测试DAO组件=====重构Spring+Struts2=====
+		5)将Action定义到Spring容器，如果使用了DAO，采用注入方式使用
+		6)引入struts-spring-plugin.jar
+		7)修改Action的struts配置(将class属性修改为容器中的id值)
+		8)在web.xml中添加ContextLoaderListener配置，实例Srping容器
+		9)测试SSH
+		10)为了支持Hibernate延迟加载的使用，在web.xml中可以配置Spring提供的OpenSessionInViewFilter，将关闭延迟到jsp解析之后
+			注意：
+				1、该Filter需要在Struts控制器Filter之前配置才能生效
+				2、Spring容器中SessionFactory组件的id值必须为sessionFactory
+				3、默认将session操作置成readOnly状态，需要添加AOP事务才能增删改。
+
+3、Spring事务管理
+	Spring提供以下两种方式管理事务：
+		1)*声明式事务管理(基于配置方式管理实现事务控制)
+			a、注解事务配置
+			--定义HibernateTransactionManager事务管理Bean组件
+				<bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+					<!-- 注入session资源 -->
+					<property name="sessionFactory" ref="sessionFactory"></property>
+				</bean>
+
+			--开启事务注解配置
+			--然后在业务组件和方法中使用@Transactional注解即可
+			注意：
+				如果将Action当作目标，需要在tx:annotation-driven>添加proxy-target-class="true"属性，表示CGLIB方式生成代理类
+		2)编程式事务管理(基于Java编程实现事务控制)
+			主要是利用transactionTemplate的execute()方法以回调方式将多个操作封装在一个事务中
+
+4、	Action到Bean的转换
+	try{
+		Object action = ac.getBean(class属性);
+	}catch(){
+		//利用反射机制生成Action
+		Class class = Class.for(class属性);
+		Object action = class.nweInstance(); 
+		//访问容器讲容器中id名与action中属性匹配的bean注入
+		注入规则：默认是按照名称匹配，即属性名和id值一致才可以
+		如果添加了@Resource，可以按类型匹配注入
+	}

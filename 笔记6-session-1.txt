@@ -1,0 +1,55 @@
+1、session(会话)
+	(1)什么是session？
+		a、session是服务器端的状态管理技术
+		b、当浏览器访问服务器时，服务器会创建一个session对象，该对象有一个唯一的id号，称之为sessionId。接下来，服务器在默认情况下，会使用set-cookie消息头将sessionId发送给浏览器，浏览器会将这个sessionId保存下来(内存)；当浏览器再次访问服务器时，会将sessionId使用cookie消息头发送给服务器，服务器依据这个sessionId就可以找到之前创建的session对象。
+	(2)如何获得一个session对象
+		1)
+			HttpSession s = request.getSession(boolean flag);
+				当flag=true时，服务器会先检查请求当中是否有sessionId，如果没有，则创建一个session对象。如果有sessionId，则服务器会依据sessionId查找对应的session对象，如果找到了，则返回该session对象，若找不到(超时)，服务器会创建一个新的session对象。
+				当flag=false时，服务器会先检查请求当中是否有sessionId，如果没有，则返回null。如果有sessionId，则服务器会依据sessionId查找对应的session对象，如果找到了，则返回该session对象，若找不到(超时)，则返回null。
+		2)
+			HttpSession s = request.getSession();等价于request.getSession(true);
+
+	(3)HttpSession接口中提供的常用方法
+		//获得sessionId，返回String
+		String getId();
+
+		//绑定一个对象到session对象上。
+		void setAttribute(String name, Object obj);
+
+		//获得绑定对象，如果不存在，返回null
+		Object getAttribute(String name);
+
+		//解除绑定
+		void removeAttribute(String name);
+
+	(4)session的超时
+		服务器会将空闲时间过长的session对象删除掉，服务器默认的session超时限制一般为30min。
+			a、可以修改这个默认的超时限制，比如可以修改tomcat的web.xml文件。
+				<session-config>
+	       			<session-timeout>30</session-timeout>
+	    		</session-config>
+	    	修改完之后需要重新启动tomcat服务器。
+	    	b、也可以修改某个应用的web.xml文件。把下面的配置信息放入web.xml文件，只要修改时间30。
+	    		<session-config>
+	       			<session-timeout>30</session-timeout>
+	    		</session-config>
+	    	c、也可以通过编程的方式来修改超时操作。
+	    		setMaxInactiveInterval(int seconds);
+
+	(5)立即删除session
+		session.invalidata();
+
+2、session案例
+	(1)session验证
+		session验证经常用于保护一些需要登录之后才能访问的资源。
+		比如，只有登录成功以后才能访问main.jsp。
+		step1、登录成功以后，绑定一些数据到session对象上，
+			比如：
+				session.setAttribute("user",user);
+		step2、对于需要保护的资源，添加session验证的代码
+			比如：
+				Object obj = session.getAttribute("user");
+				if(obj == null){
+					//没有登录成功，或者因为session超时，服务器已经删除了之前的session对象，重定向到登录页面
+				}

@@ -1,0 +1,55 @@
+1、转发
+	(1)什么是转发？
+		一个web组件(servlet/jsp)将未完成的处理交给另外一个web组件继续完成。
+		常见的情况是：一个servlet将数据处理完毕之后转交给jsp去展现。
+	(2)如何转发？
+		a、绑定数据到request
+			//name：绑定名，obj：绑定值
+			request.setAttribute(String name, Object obj);
+
+		b、获得一个转发器
+			//url：要转发到的web组件
+			RequestDispatcher rd = 
+			request.getRequestDispatcher(String url);
+
+		c、转发
+			rd.forward(request, response);
+
+		d、在转发的目的地，可以使用request.getAttribute方法，获得绑定的数据，然后进行处理。
+			//如果name对应的值不存在，会返回null
+			Object request.getAttribute(String name);
+
+	(3)编程需要注意的问题
+		a、转发之前，会先清空response对象中缓存的数据
+		b、转发之前，不能调用out.close方法
+
+	(4)转发的特点
+		a、转发的目的地只能够是同一个应用内部的某个组件的地址。
+		b、转发之后，浏览器的地址栏的地址不变
+
+2、让容器来处理系统异常
+	a、将异常抛给容器
+		throw new ServletException(e);
+
+	b、编写一个错误处理页面，比如
+		syserror.jsp
+
+	c、配置错误处理页面(让容器知道，当捕获到相应的异常后，应该调用哪个页面)。
+		<error-page>
+	  		<!--错误类型为完整的路径，包括包和类名-->
+	  		<exception-type>javax.servlet.ServletException</exception-type>
+	  		<location>/syserror.jsp</location>
+  		</error-page>
+
+ 3、路径问题：
+ 	链接地址、表单提交地址、重定向、转发
+	相对路径与绝对路径
+	 	(1)什么是相对路径？
+	 		不以"/"开头的路径
+	 	(2)什么是绝对路径？
+	 		以"/"开头的路径
+	 	(3)如何书写绝对路径？
+	 		链接地址、表单提交地址、重定向的绝对路径应该从应用名开始写，而转发应该从应用名之后开始写。
+
+	 		//获得实际部署时的应用名,包括开头的"/"
+	 		String request.getContextPath();

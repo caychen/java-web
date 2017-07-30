@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		var $obj = $('<div>岳飞是一个抗金的民族英雄</div>');
+		//$('body').append($obj);
+		
+		//$('body').prepend($obj);
+		
+		//简化
+		$('body').append('<div>岳飞是一个抗金的民族英雄</div>');
+	}
+	
+	function f2(){
+		$('ul').after('<p>Hello</p>');
+		$('li:contains(item2)').before('<li>item4</li>');
+	}
+</script>
+</head>
+<body>
+	<a href="javascript:;" onclick="f2();">岳飞是谁？</a>
+	
+	<ul>
+		<li>item1</li>
+		<li>item2</li>
+		<li>item3</li>
+	</ul>
+</body>
+</html>

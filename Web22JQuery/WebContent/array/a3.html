@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('#b1').click(function(){
+			var $obj = $('ul li');
+			
+			//get:获得一个dom对象组成的数组
+			var arr = $obj.get();
+			arr[2].innerHTML = "hello";
+			
+			//返回下标为index的dom对象
+			var obj = $obj.get(1);
+			obj.innerHTML = "java";
+		});
+	});
+</script>
+</head>
+<body>
+	<ul>
+		<li>item1</li>
+		<li>item2</li>
+		<li>item3</li>
+	</ul>
+	<input type="button" value="点击" id="b1"/>
+</body>
+</html>

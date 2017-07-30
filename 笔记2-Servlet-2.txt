@@ -1,0 +1,96 @@
+1、http协议(了解)
+	(1)什么是http(即hypertext transport protocol：超文本传输协议)协议？
+		是一种应用层协议，由w3c制定，它定义了浏览器(或者其他客户端)与web服务器之间通讯的过程及数据格式。
+	(2)、通讯的过程
+		a、浏览器建立与web服务器之间的连接(socket)。
+		b、浏览器要将请求数据打包(请求数据包)，然后发送给web服务器。
+		c、web服务器将处理结果打包(响应数据包)，然后发送给浏览器。
+		d、web服务器关闭连接
+		如果浏览器需要再发送请求，就必须重新建立一个新的连接。
+	特点：一次请求，一次连接。
+	优点：web服务器可以利用有限的连接个数为尽可能多的客户端服务。
+
+	(3)、数据格式
+		a)请求数据包
+			i、请求行： 请求方式 请求资源路径 协议描述
+			ii、若干消息头：
+				消息头是一些键值对，一般由w3c定义，有特定的含义。浏览器和服务器之间，可以通过发送消息头来传递一些特定的消息，比如，浏览器可以通过user-agent消息头来通知服务器浏览器的类型和版本。
+			iii、实体内容：
+				只有当请求方式为post时，浏览器才会把请求参数添加到实体内容里面。如果请求方式为get，实体内容为空，浏览器会将请求参数添加到请求资源路径的后面。
+
+		b)响应数据包
+			i、状态行：协议描述 状态码 状态描述
+			ii、若干消息头
+				服务器可以发送一些消息头给浏览器，比如content-type，告诉浏览器服务器返回的数据类型和编码格式，比如utf-8，iso-8859-1。
+			iii、实体内容
+				程序处理之后，返回的结果。
+
+2、get请求与post请求
+	(1)哪些情况下，浏览器会使用get方式发请求
+		a、直接在浏览器地址栏输入某个地址
+		b、点击链接
+		c、表单默认的提交方式
+	(2)、哪些情况下，浏览器会使用post方式发请求
+		a、设置表单的method属性值为post。
+	(3)、get请求的特点：
+		get请求会将请求参数添加到请求资源路径的后面。因为请求行存放的数据大小有限，所以get请求只能提交少量的数据。
+		get请求会将请求参数显示在浏览器的地址栏里，不安全。
+	(4)、post请求的特点：
+		post请求会将请求参数添加到实体内容里面，所以可以提交大量的数据。
+		post请求不会将请求参数显示在浏览器的地址栏。注意，post请求并不会对请求参数进行加密处理，所以对于敏感数据需要加密。
+
+3、编码问题
+	(1)java语言在内存当中，会使用unicode编码格式(字符集)来保存字符
+	(2)编码：把unicode这种编码格式对应的字节数组转换成某种本地的编码格式(比如gbk)对应的字节数组。
+	(3)解码：把某种本地编码格式的字节数组转换成unicode编码格式对应的字节数组。
+	(4)如果servlet要输出中文，需要调用response.setContentType("text/html;charset=utf-8");
+		注意：
+			a、charset=utf-8：用来指定编码格式，只要支持中文即可，比如也可以设置为charset=gbk;
+			b、作用有两个：
+				第1、生成一个content-type消息头，告诉浏览器返回的数据类型和编码格式。
+				第2、服务器在输出时，会使用指定的编码格式进行编码。
+	(5)如果表单有中文参数值，也需要注意编码问题
+		因为，当表单提交的时候，浏览器会对表单中的数据进行编码(会使用打开表单时的编码格式进行编码)，而服务器默认情况下，会使用iso-8859-1去解码，所以会产生乱码问题。
+		解决方式1：
+			第1、先保证表单所在的页面按照指定的编码格式打开，使用<meta http-equiv="content-type" content="text/html;charset=utf-8">
+			第2、调用request.setCharacterEncoding("utf-8");意思是告诉服务器，使用指定的编码格式进行解码，该方法只适用于post请求。
+		解决方式2：
+			第1、同上
+			第2、使用str = new String(str.getBytes("iso-8859-1"),"utf-8");
+
+4、如何读取请求参数？
+	(1)、方法一
+		String HttpServletRequest.getParameter(String paraName);
+		注意：
+			a、如果paraName与实际的参数名称不一致，会获得null。
+			b、在使用表单提交数据时，如果用户没有填写值，会获得空字符串。
+	(2)、方法二
+		String[] HttpServletRequest.getParameterValues(String paraName);
+		注意：
+			a、当有多个参数名称相同时，使用该方法。
+
+5、访问数据库
+	(1)使用mysql数据库
+		a、登录mysql
+			mysql -uroot;
+		b、查看当前所有的数据库
+			show databases;
+		c、创建一个新的数据库或者使用已存在的数据库
+			create database xxx default character set utf8;
+		d、使用某个数据库
+			use xxx;
+		e、查看某个数据库里的所有数据表
+			show tables;
+		f、建表
+			create table emp(
+				id int primary key auto_increment,
+				name varchar(20),
+				salary double,
+				age int
+			);
+		g、插入数据
+			insert into emp(name,salary,age) values('cam',3000,19);
+
+	(2)、使用jdbc访问数据库
+		a、将jdbc驱动放到WEB-INF\lib下。
+		b、编码jdbc代码，注意异常处理。

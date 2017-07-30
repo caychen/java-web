@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		//$('div:hidden').css('display','block');
+		$('div:hidden').show(4000);//以动画的形式，1s时间慢慢显示
+		
+		//$('div:visible').css('display','none');
+		//$('div:visible').hide(1000);
+	}
+</script>
+</head>
+<body>
+	<div >hello java</div>
+	<div style="display:none">hello jQuery</div>
+	<input type="button" value="点击" onclick="f1();"/>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		//alert("html():" + $('#d1').html());//innerHTML
+		//alert("text():" + $('#d1').text());//innerText
+		
+		//alert("val():" + $('#username').val());
+		
+		alert("attr():" + $('#username').attr('id'));
+	}
+	
+	function f2(){
+		$('#d1').html('Hello Java');
+		$('#username').val('Cam');
+		
+		$('#d1').attr('style','background-color:red');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">
+		<span>Hello jQuery</span>
+	</div>
+	<input id="username" />
+	<input type="button" value="点击" onclick="f2();"/>
+</body>
+</html>

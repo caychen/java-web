@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){//id为d1的节点的所有div后代
+		$('#d1 div').css('font-size','60px');
+	}
+	function f2() {
+		$('#d1>div').css('font-size','60px');
+	}
+	function f3() {
+		$('#d2+div').css('font-size','60px');
+	}
+	function f4() {
+		$('#d2~div').css('font-size','60px');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">
+		<div id="d2">hello 1</div>
+		<div id="d3" style="background-color:blue;">
+			<div id="d4" style="color:red;">hello 2</div>
+		</div>
+		<div id="d5">hello 3</div>
+		<p>hello 4</p>
+	</div>
+	<input type="button" value="层次选择器的使用" onclick="f4();"/>
+</body>
+</html>

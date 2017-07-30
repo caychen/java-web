@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	#d1{
+		width: 200px;
+		height: 200px;
+		border: 1px solid red;
+	}
+</style>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	$(function(){
+		$('a').click(function(e){
+			//依据事件对象获取事件源
+			//e为jQuery对象，封装了底层的事件对象
+			var obj = e.target;//target属性返回的是一个dom对象，不区分浏览器
+			alert(obj.innerHTML);
+			
+			alert(e.type);
+			alert(e.pageX + "," + e.pageY);
+		});
+		
+		$('span').click(function(e){
+			alert('111');
+			//停止冒泡
+			e.stopPropagation();
+		});
+		
+		$('div').click(function(e){
+			alert('222');
+		});
+		
+		$('a[class]').click(function(e){
+			var flag = confirm("确定删除?");
+			if(!flag){
+				//阻止浏览器默认行为，即不再向链接地址发请求
+				e.preventDefault();
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<a href="javascript:;">Click1</a>
+	<a href="javascript:;">Click2</a>
+	
+	<div id="d1">
+		<span>Click Me</span>
+	</div>
+	
+	<a href="del.do" class="">删除</a>
+</body>
+</html>

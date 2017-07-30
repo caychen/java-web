@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1() {//id选择器
+		var $obj = $('#d1');
+		$obj.css('font-size','60px');
+	}
+	function f2() {//类选择器
+		var $obj = $('.s1');
+		$obj.css('font-size','60px');
+	}
+	function f3() {//
+		var $obj = $('p.s1');
+		$obj.css('font-size','60px');
+	}
+	function f4() {//元素选择器
+		$('div').css('font-size','60px');
+	}
+	function f5(){//多项选择器
+		$('#d1,p').css('font-size','60px');
+	}
+	function f6() {//所有的dom节点
+		$('*').css('font-size','60px');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">hello jquery</div>
+	<div class="s1">hello java</div>
+	<p class="s1">hello c++</p><br/>
+	<input type="button" value="基本选择器" onclick="f6();"/>
+</body>
+</html>

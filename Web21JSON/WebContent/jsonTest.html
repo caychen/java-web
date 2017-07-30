@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript">
+	function f1() {
+		var p = {'name':'zs','age':22};
+		alert(p.name);
+	}
+	function f2() {
+		var p = {'name':'zs','address':
+				{
+					'city':'cs',
+					'street':'rm'
+				}
+		};
+		alert(p.address.city);
+	}
+	
+	function  f3() {
+		var arr = [{'name':'zs','age':22},{'name':'aaa','age':23}];
+		alert(arr[1].age);
+		
+	}
+	
+	//将一个json字符串转换成一个js对象
+	function f4() {
+		var str = '{"name":"zs","age":22}';
+		//alert(typeof str);
+		//使用prototype.js提供的evalJSON函数，将json字符串转换成js对象
+		var obj = str.evalJSON();
+		alert(obj.name);
+	}
+</script>
+</head>
+<body>
+	<a href="javascript:;" onclick="f4();">ClickMe</a>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src='../js/jquery.js'></script>
+<script type="text/javascript">
+	function f1(e){
+		//获取事件源
+		//var obj = e.target;//非IE
+		
+		//var obj = e.srcElement;//IE
+		
+		var obj = e.target || e.srcElement;
+		alert(obj.innerHTML);
+	}
+</script>
+</head>
+<body>
+	<a href="javascript:;" onclick="f1(event);">Click1</a>
+	<a href="javascript:;" onclick="f1(event);">Click2</a>
+</body>
+</html>

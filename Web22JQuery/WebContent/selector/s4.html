@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript">
+	function f1(){
+		$('div:contains(吃饭)').css('font-size','60px');
+		$('div:contains(了)').css('font-style','italic');
+	}
+	function f2(){
+		//$('div:empty').css('border','1px solid yellow');
+		$('div:empty').css({'border':'1px solid yellow','width':'400px','height':'300px'});
+	}
+	function f3(){
+		$('div:has(p)').css('background-color','red');
+	}
+	function f4(){
+		$('div:parent').css('background-color','red');
+	}
+</script>
+</head>
+<body>
+	<div id="d1">吃饭了吗？</div>
+	<div></div>
+	<div>
+		<p>一会儿要下课了</p>
+	</div>
+	<input type="button" value="点击" onclick="f4();"/>
+</body>
+</html>
